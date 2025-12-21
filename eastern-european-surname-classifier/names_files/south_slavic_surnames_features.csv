@@ -1,0 +1,493 @@
+﻿country,surname,rank,length,vowel_count,diacritic_count,first_letter,last_letter,country_code
+Croatia,Knežević,1,8,3,2,K,ć,0
+Croatia,Horvat,2,6,2,0,H,t,0
+Croatia,Kovačević,3,9,4,2,K,ć,0
+Croatia,Pavlović,4,8,3,1,P,ć,0
+Croatia,Blažević,5,8,3,2,B,ć,0
+Croatia,Božić,6,5,2,2,B,ć,0
+Croatia,Lovrić,7,6,2,1,L,ć,0
+Croatia,Babić,8,5,2,1,B,ć,0
+Croatia,Marković,9,8,3,1,M,ć,0
+Croatia,Bošnjak,10,7,2,1,B,k,0
+Croatia,Grgić,11,5,1,1,G,ć,0
+Croatia,Brkić,12,5,1,1,B,ć,0
+Croatia,Filipović,13,9,4,1,F,ć,0
+Croatia,Vidović,14,7,3,1,V,ć,0
+Croatia,Tomić,15,5,2,1,T,ć,0
+Croatia,Kovačić,16,7,3,2,K,ć,0
+Croatia,Jukić,17,5,2,1,J,ć,0
+Croatia,Martinović,18,10,4,1,M,ć,0
+Croatia,Novak,19,5,2,0,N,k,0
+Croatia,Petrović,20,8,3,1,P,ć,0
+Croatia,Mandić,21,6,2,1,M,ć,0
+Croatia,Šimunović,22,9,4,2,Š,ć,0
+Croatia,Nikolić,23,7,3,1,N,ć,0
+Croatia,Jurković,24,8,3,1,J,ć,0
+Croatia,Barišić,25,7,3,2,B,ć,0
+Croatia,Lončar,26,6,2,1,L,r,0
+Croatia,Živković,27,8,3,2,Ž,ć,0
+Croatia,Šimić,28,5,2,2,Š,ć,0
+Croatia,Jurić,29,5,2,1,J,ć,0
+Croatia,Rukavina,30,8,4,0,R,a,0
+Croatia,Perković,31,8,3,1,P,ć,0
+Croatia,Vučković,32,8,3,2,V,ć,0
+Croatia,Lukić,33,5,2,1,L,ć,0
+Croatia,Matijević,34,9,4,1,M,ć,0
+Croatia,Novosel,35,7,3,0,N,l,0
+Croatia,Klarić,36,6,2,1,K,ć,0
+Croatia,Matković,37,8,3,1,M,ć,0
+Croatia,Pavić,38,5,2,1,P,ć,0
+Croatia,Bašić,39,5,2,2,B,ć,0
+Croatia,Antunović,40,9,4,1,A,ć,0
+Croatia,Marušić,41,7,3,2,M,ć,0
+Croatia,Ćosić,42,5,2,2,Ć,ć,0
+Croatia,Kovač,43,5,2,1,K,č,0
+Croatia,Matić,44,5,2,1,M,ć,0
+Croatia,Miletić,45,7,3,1,M,ć,0
+Croatia,Posavec,46,7,3,0,P,c,0
+Croatia,Kralj,47,5,1,0,K,j,0
+Croatia,Vuković,48,7,3,1,V,ć,0
+Croatia,Varga,49,5,2,0,V,a,0
+Croatia,Marjanović,50,10,4,1,M,ć,0
+Croatia,Popović,51,7,3,1,P,ć,0
+Croatia,Cindrić,52,7,2,1,C,ć,0
+Croatia,Grubišić,53,8,3,2,G,ć,0
+Croatia,Jakovljević,54,11,4,1,J,ć,0
+Croatia,Dujmović,55,8,3,1,D,ć,0
+Croatia,Novaković,56,9,4,1,N,ć,0
+Croatia,Jurišić,57,7,3,2,J,ć,0
+Croatia,Brajković,58,9,3,1,B,ć,0
+Croatia,Ivančić,59,7,3,2,I,ć,0
+Croatia,Perić,60,5,2,1,P,ć,0
+Croatia,Galić,61,5,2,1,G,ć,0
+Croatia,Bilić,62,5,2,1,B,ć,0
+Croatia,Ivanković,63,9,4,1,I,ć,0
+Croatia,Šimunić,64,7,3,2,Š,ć,0
+Croatia,Jozić,65,5,2,1,J,ć,0
+Croatia,Crnković,66,8,2,1,C,ć,0
+Croatia,Marić,67,5,2,1,M,ć,0
+Croatia,Janković,68,8,3,1,J,ć,0
+Croatia,Burić,69,5,2,1,B,ć,0
+Croatia,Vrdoljak,70,8,2,0,V,k,0
+Croatia,Kolarić,71,7,3,1,K,ć,0
+Croatia,Mitrović,72,8,3,1,M,ć,0
+Croatia,Mikulić,73,7,3,1,M,ć,0
+Croatia,Radić,74,5,2,1,R,ć,0
+Croatia,Dragičević,75,10,4,2,D,ć,0
+Croatia,Lučić,76,5,2,2,L,ć,0
+Croatia,Vukelić,77,7,3,1,V,ć,0
+Croatia,Đurđević,78,8,3,3,Đ,ć,0
+Croatia,Jovanović,79,9,4,1,J,ć,0
+Croatia,Grgurić,80,7,2,1,G,ć,0
+Croatia,Jurčević,81,8,3,2,J,ć,0
+Croatia,Vidaković,82,9,4,1,V,ć,0
+Croatia,Petković,83,8,3,1,P,ć,0
+Croatia,Ružić,84,5,2,2,R,ć,0
+Croatia,Herceg,85,6,2,0,H,g,0
+Croatia,Abramović,86,9,4,1,A,ć,0
+Croatia,Šarić,87,5,2,2,Š,ć,0
+Croatia,Đurić,88,5,2,2,Đ,ć,0
+Croatia,Pavlić,89,6,2,1,P,ć,0
+Croatia,Lončarić,90,8,3,2,L,ć,0
+Croatia,Stanić,91,6,2,1,S,ć,0
+Croatia,Butković,92,8,3,1,B,ć,0
+Croatia,Cvitković,93,9,3,1,C,ć,0
+Croatia,Katić,94,5,2,1,K,ć,0
+Croatia,Krznarić,95,8,2,1,K,ć,0
+Croatia,Josipović,96,9,4,1,J,ć,0
+Slovenia,Novak,1,5,2,0,N,k,1
+Slovenia,Horvat,2,6,2,0,H,t,1
+Slovenia,Krajnc,3,6,1,0,K,c,1
+Slovenia,Kovačič,4,7,3,2,K,č,1
+Slovenia,Zupančič,5,8,3,2,Z,č,1
+Slovenia,Potočnik,6,8,3,1,P,k,1
+Slovenia,Kovač,7,5,2,1,K,č,1
+Slovenia,Mlakar,8,6,2,0,M,r,1
+Slovenia,Kos,9,3,1,0,K,s,1
+Slovenia,Golob,10,5,2,0,G,b,1
+Slovenia,Vidmar,11,6,2,0,V,r,1
+Slovenia,Turk,12,4,1,0,T,k,1
+Slovenia,Božič,13,5,2,2,B,č,1
+Slovenia,Kralj,14,5,1,0,K,j,1
+Slovenia,Korošec,15,7,3,1,K,c,1
+Slovenia,Bizjak,16,6,2,0,B,k,1
+Slovenia,Zupan,17,5,2,0,Z,n,1
+Slovenia,Kotnik,18,6,2,0,K,k,1
+Slovenia,Hribar,19,6,2,0,H,r,1
+Slovenia,Kavčič,20,6,2,2,K,č,1
+Slovenia,Rozman,21,6,2,0,R,n,1
+Slovenia,Oblak,22,5,2,0,O,k,1
+Slovenia,Petek,23,5,2,0,P,k,1
+Slovenia,Kolar,24,5,2,0,K,r,1
+Slovenia,Kastelic,25,8,3,0,K,c,1
+Slovenia,Žagar,26,5,2,1,Ž,r,1
+Slovenia,Hočevar,27,7,3,1,H,r,1
+Slovenia,Košir,28,5,2,1,K,r,1
+Slovenia,Koren,29,5,2,0,K,n,1
+Slovenia,Klemenčič,30,9,3,2,K,č,1
+Slovenia,Zajc,31,4,1,0,Z,c,1
+Slovenia,Knez,32,4,1,0,K,z,1
+Slovenia,Medved,33,6,2,0,M,d,1
+Slovenia,Zupanc,34,6,2,0,Z,c,1
+Slovenia,Petrič,35,6,2,1,P,č,1
+Slovenia,Pirc,36,4,1,0,P,c,1
+Slovenia,Hrovat,37,6,2,0,H,t,1
+Slovenia,Lah,38,3,1,0,L,h,1
+Slovenia,Pavlič,39,6,2,1,P,č,1
+Slovenia,Kuhar,40,5,2,0,K,r,1
+Slovenia,Zorko,41,5,2,0,Z,o,1
+Slovenia,Tomažič,42,7,3,2,T,č,1
+Slovenia,Uršič,43,5,2,2,U,č,1
+Slovenia,Babič,44,5,2,1,B,č,1
+Slovenia,Erjavec,45,7,3,0,E,c,1
+Slovenia,Jerman,46,6,2,0,J,n,1
+Slovenia,Sever,47,5,2,0,S,r,1
+Slovenia,Jereb,48,5,2,0,J,b,1
+Slovenia,Kranjc,49,6,1,0,K,c,1
+Slovenia,Majcen,50,6,2,0,M,n,1
+Slovenia,Furlan,51,6,2,0,F,n,1
+Slovenia,Pušnik,52,6,2,1,P,k,1
+Slovenia,Rupnik,53,6,2,0,R,k,1
+Slovenia,Breznik,54,7,2,0,B,k,1
+Slovenia,Lesjak,55,6,2,0,L,k,1
+Slovenia,Perko,56,5,2,0,P,o,1
+Slovenia,Kovačević,57,9,4,2,K,ć,1
+Slovenia,Dolenc,58,6,2,0,D,c,1
+Slovenia,Logar,59,5,2,0,L,r,1
+Slovenia,Jenko,60,5,2,0,J,o,1
+Slovenia,Močnik,61,6,2,1,M,k,1
+Slovenia,Pečnik,62,6,2,1,P,k,1
+Slovenia,Pavlin,63,6,2,0,P,n,1
+Slovenia,Ribič,64,5,2,1,R,č,1
+Slovenia,Žnidaršič,65,9,3,3,Ž,č,1
+Slovenia,Vidic,66,5,2,0,V,c,1
+Slovenia,Jelen,67,5,2,0,J,n,1
+Slovenia,Tomšič,68,6,2,2,T,č,1
+Slovenia,Petrović,69,8,3,1,P,ć,1
+Slovenia,Janežič,70,7,3,2,J,č,1
+Slovenia,Marolt,71,6,2,0,M,t,1
+Slovenia,Pintar,72,6,2,0,P,r,1
+Slovenia,Gregorič,73,8,3,1,G,č,1
+Slovenia,Maček,74,5,2,1,M,k,1
+Slovenia,Zadravec,75,8,3,0,Z,c,1
+Slovenia,Dolinar,76,7,3,0,D,r,1
+Slovenia,Černe,77,5,2,1,Č,e,1
+Slovenia,Fras,78,4,1,0,F,s,1
+Slovenia,Hren,79,4,1,0,H,n,1
+Slovenia,Leban,80,5,2,0,L,n,1
+Slovenia,Kocjančič,81,9,3,2,K,č,1
+Slovenia,Mihelič,82,7,3,1,M,č,1
+Slovenia,Lešnik,83,6,2,1,L,k,1
+Slovenia,Blatnik,84,7,2,0,B,k,1
+Slovenia,Bezjak,85,6,2,0,B,k,1
+Slovenia,Čeh,86,3,1,1,Č,h,1
+Slovenia,Kokalj,87,6,2,0,K,j,1
+Slovenia,Cerar,88,5,2,0,C,r,1
+Slovenia,Jug,89,3,1,0,J,g,1
+Slovenia,Kobal,90,5,2,0,K,l,1
+Slovenia,Rus,91,3,1,0,R,s,1
+Slovenia,Vidovič,92,7,3,1,V,č,1
+Slovenia,Bogataj,93,7,3,0,B,j,1
+Slovenia,Primožič,94,8,3,2,P,č,1
+Slovenia,Kolenc,95,6,2,0,K,c,1
+Slovenia,Lazar,96,5,2,0,L,r,1
+Slovenia,Nemec,97,5,2,0,N,c,1
+Slovenia,Jovanović,98,9,4,1,J,ć,1
+Slovenia,Kolarič,99,7,3,1,K,č,1
+Serbia,Jovanović,1,9,4,1,J,ć,2
+Serbia,Nikolić,2,7,3,1,N,ć,2
+Serbia,Petrović,3,8,3,1,P,ć,2
+Serbia,Đorđević,4,8,3,3,Đ,ć,2
+Serbia,Ilić,5,4,2,1,I,ć,2
+Serbia,Pavlović,6,8,3,1,P,ć,2
+Serbia,Marković,7,8,3,1,M,ć,2
+Serbia,Stojanović,8,10,4,1,S,ć,2
+Serbia,Popović,9,7,3,1,P,ć,2
+Serbia,Živković,10,8,3,2,Ž,ć,2
+Serbia,Janković,11,8,3,1,J,ć,2
+Serbia,Todorović,12,9,4,1,T,ć,2
+Serbia,Stanković,13,9,3,1,S,ć,2
+Serbia,Ristić,14,6,2,1,R,ć,2
+Serbia,Cvetković,15,9,3,1,C,ć,2
+Serbia,Kostić,16,6,2,1,K,ć,2
+Serbia,Tomić,17,5,2,1,T,ć,2
+Serbia,Dimitrijević,18,12,5,1,D,ć,2
+Serbia,Milošević,19,9,4,2,M,ć,2
+Serbia,Krstić,20,6,1,1,K,ć,2
+Serbia,Filipović,21,9,4,1,F,ć,2
+Serbia,Lukić,22,5,2,1,L,ć,2
+Serbia,Ivanović,23,8,4,1,I,ć,2
+Serbia,Kovačević,24,9,4,2,K,ć,2
+Serbia,Aleksić,25,7,3,1,A,ć,2
+Serbia,Lazić,26,5,2,1,L,ć,2
+Serbia,Petković,27,8,3,1,P,ć,2
+Serbia,Obradović,28,9,4,1,O,ć,2
+Serbia,Mitrović,29,8,3,1,M,ć,2
+Serbia,Lazarević,30,9,4,1,L,ć,2
+Serbia,Savić,31,5,2,1,S,ć,2
+Serbia,Radovanović,32,11,5,1,R,ć,2
+Serbia,Jović,33,5,2,1,J,ć,2
+Serbia,Mladenović,34,10,4,1,M,ć,2
+Serbia,Đurić,35,5,2,2,Đ,ć,2
+Serbia,Vasić,36,5,2,1,V,ć,2
+Serbia,Nedeljković,37,11,4,1,N,ć,2
+Serbia,Živanović,38,9,4,2,Ž,ć,2
+Serbia,Stevanović,39,10,4,1,S,ć,2
+Serbia,Milenković,40,10,4,1,M,ć,2
+Serbia,Milovanović,41,11,5,1,M,ć,2
+Serbia,Milosavljević,42,13,5,1,M,ć,2
+Serbia,Novaković,43,9,4,1,N,ć,2
+Serbia,Bogdanović,44,10,4,1,B,ć,2
+Serbia,Đokić,45,5,2,2,Đ,ć,2
+Serbia,Mitić,46,5,2,1,M,ć,2
+Serbia,Simić,47,5,2,1,S,ć,2
+Serbia,Tasić,48,5,2,1,T,ć,2
+Serbia,Trajković,49,9,3,1,T,ć,2
+Serbia,Antić,50,5,2,1,A,ć,2
+Serbia,Gajić,51,5,2,1,G,ć,2
+Serbia,Marinković,52,10,4,1,M,ć,2
+Serbia,Radosavljević,53,13,5,1,R,ć,2
+Serbia,Pešić,54,5,2,2,P,ć,2
+Serbia,Mihajlović,55,10,4,1,M,ć,2
+Serbia,Anđelković,56,10,4,2,A,ć,2
+Serbia,Knežević,57,8,3,2,K,ć,2
+Serbia,Blagojević,58,10,4,1,B,ć,2
+Serbia,Vasiljević,59,10,4,1,V,ć,2
+Serbia,Zdravković,60,10,3,1,Z,ć,2
+Serbia,Jevtić,61,6,2,1,J,ć,2
+Serbia,Stojković,62,9,3,1,S,ć,2
+Serbia,Rakić,63,5,2,1,R,ć,2
+Serbia,Stefanović,64,10,4,1,S,ć,2
+Serbia,Grujić,65,6,2,1,G,ć,2
+Serbia,Vuković,66,7,3,1,V,ć,2
+Serbia,Arsić,67,5,2,1,A,ć,2
+Serbia,Milanović,68,9,4,1,M,ć,2
+Serbia,Stanojević,69,10,4,1,S,ć,2
+Serbia,Veličković,70,10,4,2,V,ć,2
+Serbia,Vučković,71,8,3,2,V,ć,2
+Serbia,Veljković,72,9,3,1,V,ć,2
+Serbia,Babić,73,5,2,1,B,ć,2
+Serbia,Paunović,74,8,4,1,P,ć,2
+Serbia,Đurđević,75,8,3,3,Đ,ć,2
+Serbia,Perić,76,5,2,1,P,ć,2
+Serbia,Matić,77,5,2,1,M,ć,2
+Serbia,Ćirić,78,5,2,2,Ć,ć,2
+Serbia,Gavrilović,79,10,4,1,G,ć,2
+Serbia,Milić,80,5,2,1,M,ć,2
+Serbia,Jakovljević,81,11,4,1,J,ć,2
+Serbia,Ivković,82,7,3,1,I,ć,2
+Serbia,Marjanović,83,10,4,1,M,ć,2
+Serbia,Tošić,84,5,2,2,T,ć,2
+Serbia,Nešić,85,5,2,2,N,ć,2
+Serbia,Maksimović,86,10,4,1,M,ć,2
+Serbia,Đukić,87,5,2,2,Đ,ć,2
+Serbia,Jeremić,88,7,3,1,J,ć,2
+Serbia,Urošević,89,8,4,2,U,ć,2
+Serbia,Miljković,90,9,3,1,M,ć,2
+Serbia,Miletić,91,7,3,1,M,ć,2
+Serbia,Stamenković,92,11,4,1,S,ć,2
+Serbia,Radulović,93,9,4,1,R,ć,2
+Serbia,Trifunović,94,10,4,1,T,ć,2
+Serbia,Ignjatović,95,10,4,1,I,ć,2
+Serbia,Radović,96,7,3,1,R,ć,2
+Serbia,Radivojević,97,11,5,1,R,ć,2
+Serbia,Ranđelović,98,10,4,2,R,ć,2
+Serbia,Božić,99,5,2,2,B,ć,2
+Bosnia and Herzegovina,Hodžić,1,6,2,2,H,ć,3
+Bosnia and Herzegovina,Kovačević,2,9,4,2,K,ć,3
+Bosnia and Herzegovina,Marković,3,8,3,1,M,ć,3
+Bosnia and Herzegovina,Petrović,4,8,3,1,P,ć,3
+Bosnia and Herzegovina,Tomić,5,5,2,1,T,ć,3
+Bosnia and Herzegovina,Delić,6,5,2,1,D,ć,3
+Bosnia and Herzegovina,Hadžić,7,6,2,2,H,ć,3
+Bosnia and Herzegovina,Savić,8,5,2,1,S,ć,3
+Bosnia and Herzegovina,Halilović,9,9,4,1,H,ć,3
+Bosnia and Herzegovina,Babić,10,5,2,1,B,ć,3
+Bosnia and Herzegovina,Marić,11,5,2,1,M,ć,3
+Bosnia and Herzegovina,Jovanović,12,9,4,1,J,ć,3
+Bosnia and Herzegovina,Ilić,13,4,2,1,I,ć,3
+Bosnia and Herzegovina,Bašić,14,5,2,2,B,ć,3
+Bosnia and Herzegovina,Vuković,15,7,3,1,V,ć,3
+Bosnia and Herzegovina,Lukić,16,5,2,1,L,ć,3
+Bosnia and Herzegovina,Popović,17,7,3,1,P,ć,3
+Bosnia and Herzegovina,Knežević,18,8,3,2,K,ć,3
+Bosnia and Herzegovina,Simić,19,5,2,1,S,ć,3
+Bosnia and Herzegovina,Nikolić,20,7,3,1,N,ć,3
+Bosnia and Herzegovina,Pavlović,21,8,3,1,P,ć,3
+Bosnia and Herzegovina,Đurić,22,5,2,2,Đ,ć,3
+Bosnia and Herzegovina,Mitrović,23,8,3,1,M,ć,3
+Bosnia and Herzegovina,Jović,24,5,2,1,J,ć,3
+Bosnia and Herzegovina,Avdić,25,5,2,1,A,ć,3
+Bosnia and Herzegovina,Begić,26,5,2,1,B,ć,3
+Bosnia and Herzegovina,Božić,27,5,2,2,B,ć,3
+Bosnia and Herzegovina,Todorović,28,9,4,1,T,ć,3
+Bosnia and Herzegovina,Marjanović,29,10,4,1,M,ć,3
+Bosnia and Herzegovina,Brkić,30,5,1,1,B,ć,3
+Bosnia and Herzegovina,Perić,31,5,2,1,P,ć,3
+Bosnia and Herzegovina,Ramić,32,5,2,1,R,ć,3
+Bosnia and Herzegovina,Tadić,33,5,2,1,T,ć,3
+Bosnia and Herzegovina,Alić,34,4,2,1,A,ć,3
+Bosnia and Herzegovina,Imamović,35,8,4,1,I,ć,3
+Bosnia and Herzegovina,Lazić,36,5,2,1,L,ć,3
+Bosnia and Herzegovina,Karić,37,5,2,1,K,ć,3
+Bosnia and Herzegovina,Dedić,38,5,2,1,D,ć,3
+Bosnia and Herzegovina,Stojanović,39,10,4,1,S,ć,3
+Bosnia and Herzegovina,Đukić,40,5,2,2,Đ,ć,3
+Bosnia and Herzegovina,Bošnjak,41,7,2,1,B,k,3
+Bosnia and Herzegovina,Stevanović,42,10,4,1,S,ć,3
+Bosnia and Herzegovina,Selimović,43,9,4,1,S,ć,3
+Bosnia and Herzegovina,Smajić,44,6,2,1,S,ć,3
+Bosnia and Herzegovina,Spahić,45,6,2,1,S,ć,3
+Bosnia and Herzegovina,Filipović,46,9,4,1,F,ć,3
+Bosnia and Herzegovina,Janković,47,8,3,1,J,ć,3
+Bosnia and Herzegovina,Vidović,48,7,3,1,V,ć,3
+Bosnia and Herzegovina,Blagojević,49,10,4,1,B,ć,3
+Bosnia and Herzegovina,Gajić,50,5,2,1,G,ć,3
+Bosnia and Herzegovina,Mujkić,51,6,2,1,M,ć,3
+Bosnia and Herzegovina,Radić,52,5,2,1,R,ć,3
+Bosnia and Herzegovina,Pejić,53,5,2,1,P,ć,3
+Bosnia and Herzegovina,Ristić,54,6,2,1,R,ć,3
+Bosnia and Herzegovina,Bajrić,55,6,2,1,B,ć,3
+Bosnia and Herzegovina,Dizdarević,56,10,4,1,D,ć,3
+Bosnia and Herzegovina,Milošević,57,9,4,2,M,ć,3
+Bosnia and Herzegovina,Beganović,58,9,4,1,B,ć,3
+Bosnia and Herzegovina,Muratović,59,9,4,1,M,ć,3
+Bosnia and Herzegovina,Mujić,60,5,2,1,M,ć,3
+Bosnia and Herzegovina,Bešić,61,5,2,2,B,ć,3
+Bosnia and Herzegovina,Musić,62,5,2,1,M,ć,3
+Bosnia and Herzegovina,Šehić,63,5,2,2,Š,ć,3
+Bosnia and Herzegovina,Maksimović,64,10,4,1,M,ć,3
+Bosnia and Herzegovina,Mehić,65,5,2,1,M,ć,3
+Bosnia and Herzegovina,Mešić,66,5,2,2,M,ć,3
+Bosnia and Herzegovina,Ostojić,67,7,3,1,O,ć,3
+Bosnia and Herzegovina,Omerović,68,8,4,1,O,ć,3
+Bosnia and Herzegovina,Jurić,69,5,2,1,J,ć,3
+Bosnia and Herzegovina,Matić,70,5,2,1,M,ć,3
+Bosnia and Herzegovina,Andrić,71,6,2,1,A,ć,3
+Bosnia and Herzegovina,Mijatović,72,9,4,1,M,ć,3
+Bosnia and Herzegovina,Topić,73,5,2,1,T,ć,3
+Bosnia and Herzegovina,Suljić,74,6,2,1,S,ć,3
+Bosnia and Herzegovina,Smajlović,75,9,3,1,S,ć,3
+Bosnia and Herzegovina,Šabić,76,5,2,2,Š,ć,3
+Bosnia and Herzegovina,Lučić,77,5,2,2,L,ć,3
+Bosnia and Herzegovina,Vasić,78,5,2,1,V,ć,3
+Bosnia and Herzegovina,Jahić,79,5,2,1,J,ć,3
+Bosnia and Herzegovina,Jukić,80,5,2,1,J,ć,3
+Bosnia and Herzegovina,Zahirović,81,9,4,1,Z,ć,3
+Bosnia and Herzegovina,Ćorić,82,5,2,2,Ć,ć,3
+Bosnia and Herzegovina,Lazarević,83,9,4,1,L,ć,3
+Bosnia and Herzegovina,Trifković,84,9,3,1,T,ć,3
+Bosnia and Herzegovina,Mahmutović,85,10,4,1,M,ć,3
+Bosnia and Herzegovina,Galić,86,5,2,1,G,ć,3
+Bosnia and Herzegovina,Ivanović,87,8,4,1,I,ć,3
+Bosnia and Herzegovina,Hasanović,88,9,4,1,H,ć,3
+Bosnia and Herzegovina,Novaković,89,9,4,1,N,ć,3
+Bosnia and Herzegovina,Husić,90,5,2,1,H,ć,3
+Bosnia and Herzegovina,Topalović,91,9,4,1,T,ć,3
+Bosnia and Herzegovina,Jašarević,92,9,4,2,J,ć,3
+Bosnia and Herzegovina,Mihajlović,93,10,4,1,M,ć,3
+Bosnia and Herzegovina,Kadrić,94,6,2,1,K,ć,3
+Bosnia and Herzegovina,Mandić,95,6,2,1,M,ć,3
+Bosnia and Herzegovina,Kovač,96,5,2,1,K,č,3
+Bosnia and Herzegovina,Petković,97,8,3,1,P,ć,3
+Bosnia and Herzegovina,Hasić,98,5,2,1,H,ć,3
+Bosnia and Herzegovina,Softić,99,6,2,1,S,ć,3
+Montenegro,Popović,1,7,3,1,P,ć,4
+Montenegro,Marković,2,8,3,1,M,ć,4
+Montenegro,Ivanović,3,8,4,1,I,ć,4
+Montenegro,Radulović,4,9,4,1,R,ć,4
+Montenegro,Vukčević,5,8,3,2,V,ć,4
+Montenegro,Radović,6,7,3,1,R,ć,4
+Montenegro,Jovanović,7,9,4,1,J,ć,4
+Montenegro,Vuković,8,7,3,1,V,ć,4
+Montenegro,Knežević,9,8,3,2,K,ć,4
+Montenegro,Kovačević,10,9,4,2,K,ć,4
+Montenegro,Vujović,11,7,3,1,V,ć,4
+Montenegro,Božović,12,7,3,2,B,ć,4
+Montenegro,Pejović,13,7,3,1,P,ć,4
+Montenegro,Djurović,14,8,3,1,D,ć,4
+Montenegro,Raičević,15,8,4,2,R,ć,4
+Montenegro,Nikolić,16,7,3,1,N,ć,4
+Montenegro,Perović,17,7,3,1,P,ć,4
+Montenegro,Bulatović,18,9,4,1,B,ć,4
+Montenegro,Bošković,19,8,3,2,B,ć,4
+Montenegro,Maraš,20,5,2,1,M,š,4
+Montenegro,Radonjić,21,8,3,1,R,ć,4
+Montenegro,Janković,22,8,3,1,J,ć,4
+Montenegro,Kalač,23,5,2,1,K,č,4
+Montenegro,Petrović,24,8,3,1,P,ć,4
+Montenegro,Nikčević,25,8,3,2,N,ć,4
+Montenegro,Mugoša,26,6,3,1,M,a,4
+Montenegro,Milošević,27,9,4,2,M,ć,4
+Montenegro,Martinović,28,10,4,1,M,ć,4
+Montenegro,Ćetković,29,8,3,2,Ć,ć,4
+Montenegro,Pavićević,30,9,4,2,P,ć,4
+Montenegro,Radunović,31,9,4,1,R,ć,4
+Montenegro,Milić,32,5,2,1,M,ć,4
+Montenegro,Šćekić,33,6,2,3,Š,ć,4
+Montenegro,Šćepanović,34,10,4,3,Š,ć,4
+Montenegro,Mitrović,35,8,3,1,M,ć,4
+Montenegro,Boljević,36,8,3,1,B,ć,4
+Montenegro,Krivokapić,37,10,4,1,K,ć,4
+Montenegro,Stojanović,38,10,4,1,S,ć,4
+Montenegro,Vujačić,39,7,3,2,V,ć,4
+Montenegro,Klikovac,40,8,3,0,K,c,4
+Montenegro,Živković,41,8,3,2,Ž,ć,4
+Montenegro,Todorović,42,9,4,1,T,ć,4
+Montenegro,Vučinić,43,7,3,2,V,ć,4
+Montenegro,Vujošević,44,9,4,2,V,ć,4
+Montenegro,Rašović,45,7,3,2,R,ć,4
+Montenegro,Murić,46,5,2,1,M,ć,4
+Montenegro,Djukanović,47,10,4,1,D,ć,4
+Montenegro,Jovović,48,7,3,1,J,ć,4
+Montenegro,Karadžić,49,8,3,2,K,ć,4
+Montenegro,Stanišić,50,8,3,2,S,ć,4
+Montenegro,Vuksanović,51,10,4,1,V,ć,4
+Montenegro,Bojović,52,7,3,1,B,ć,4
+Montenegro,Damjanović,53,10,4,1,D,ć,4
+Montenegro,Rakočević,54,9,4,2,R,ć,4
+Montenegro,Kaludjerović,55,12,5,1,K,ć,4
+Montenegro,Novaković,56,9,4,1,N,ć,4
+Montenegro,Drašković,57,9,3,2,D,ć,4
+Montenegro,Miranović,58,9,4,1,M,ć,4
+Montenegro,Radević,59,7,3,1,R,ć,4
+Montenegro,Vukićević,60,9,4,2,V,ć,4
+Montenegro,Agović,61,6,3,1,A,ć,4
+Montenegro,Milović,62,7,3,1,M,ć,4
+Montenegro,Zečević,63,7,3,2,Z,ć,4
+Montenegro,Lazarević,64,9,4,1,L,ć,4
+Montenegro,Djurišić,65,8,3,2,D,ć,4
+Montenegro,Vukotić,66,7,3,1,V,ć,4
+Montenegro,Adrović,67,7,3,1,A,ć,4
+Montenegro,Mijović,68,7,3,1,M,ć,4
+Montenegro,Rajković,69,8,3,1,R,ć,4
+Montenegro,Filipović,70,9,4,1,F,ć,4
+Montenegro,Obradović,71,9,4,1,O,ć,4
+Montenegro,Lekić,72,5,2,1,L,ć,4
+Montenegro,Pavlović,73,8,3,1,P,ć,4
+Montenegro,Pajović,74,7,3,1,P,ć,4
+Montenegro,Hodžić,75,6,2,2,H,ć,4
+Montenegro,Leković,76,7,3,1,L,ć,4
+Montenegro,Dacić,77,5,2,1,D,ć,4
+Montenegro,Djukić,78,6,2,1,D,ć,4
+Montenegro,Korać,79,5,2,1,K,ć,4
+Montenegro,Vojinović,80,9,4,1,V,ć,4
+Montenegro,Ilić,81,4,2,1,I,ć,4
+Montenegro,Bubanja,82,7,3,0,B,a,4
+Montenegro,Milačić,83,7,3,2,M,ć,4
+Montenegro,Vlahović,84,8,3,1,V,ć,4
+Montenegro,Drobnjak,85,8,2,0,D,k,4
+Montenegro,Tomić,86,5,2,1,T,ć,4
+Montenegro,Terzić,87,6,2,1,T,ć,4
+Montenegro,Dragović,88,8,3,1,D,ć,4
+Montenegro,Stanković,89,9,3,1,S,ć,4
+Montenegro,Djuretić,90,8,3,1,D,ć,4
+Montenegro,Jokić,91,5,2,1,J,ć,4
+Montenegro,Sekulić,92,7,3,1,S,ć,4
+Montenegro,Joksimović,93,10,4,1,J,ć,4
+Montenegro,Mijušković,94,10,4,2,M,ć,4
+Montenegro,Tomašević,95,9,4,2,T,ć,4
+Montenegro,Škrijelj,96,8,2,1,Š,j,4
+Montenegro,Babović,97,7,3,1,B,ć,4
+Montenegro,Samardžić,98,9,3,2,S,ć,4
+Montenegro,Pepić,99,5,2,1,P,ć,4
