@@ -1,0 +1,63 @@
+{
+  "expo": {
+    "name": "Municipality Reporter",
+    "slug": "municipality-reporter",
+    "version": "1.0.0",
+    "orientation": "portrait",
+    "icon": "./assets/icon.png",
+    "userInterfaceStyle": "light",
+    "newArchEnabled": true,
+    "splash": {
+      "image": "./assets/splash-icon.png",
+      "resizeMode": "contain",
+      "backgroundColor": "#ffffff"
+    },
+    "assetBundlePatterns": [
+      "**/*"
+    ],
+    "ios": {
+      "supportsTablet": true,
+      "bundleIdentifier": "com.municipality.reporter",
+      "config": {
+        "googleMapsApiKey": "AIzaSyBdpP41yHt1lHzdDEDSav6lNBKme3t3ZL0"
+      }
+    },
+    "android": {
+      "adaptiveIcon": {
+        "foregroundImage": "./assets/adaptive-icon.png",
+        "backgroundColor": "#FFFFFF"
+      },
+      "package": "com.municipality.reporter",
+      "config": {
+        "googleMaps": {
+          "apiKey": "AIzaSyBdpP41yHt1lHzdDEDSav6lNBKme3t3ZL0"
+        }
+      },
+      "edgeToEdgeEnabled": true
+    },
+    "web": {
+      "favicon": "./assets/favicon.png"
+    },
+    "plugins": [
+      [
+        "expo-location",
+        {
+          "locationAlwaysAndWhenInUsePermission": "Allow Municipality Reporter to use your location to report issues in your area."
+        }
+      ],
+      [
+        "expo-image-picker",
+        {
+          "photosPermission": "Allow Municipality Reporter to access your photos to include with reports."
+        }
+      ],
+      [
+        "expo-camera",
+        {
+          "cameraPermission": "Allow Municipality Reporter to access your camera to take photos for reports."
+        }
+      ],
+      "expo-notifications"
+    ]
+  }
+}

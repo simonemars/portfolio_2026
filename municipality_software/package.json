@@ -1,0 +1,17 @@
+{
+  "name": "municipality_software",
+  "version": "1.0.0",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "description": "",
+  "dependencies": {
+    "firebase": "^11.10.0",
+    "react-native-reanimated": "^4.2.1",
+    "react-native-svg": "^15.15.1"
+  }
+}

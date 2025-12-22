@@ -1,0 +1,50 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+    // Users can read their own profile
+    match /users/{userId} {
+      allow read, write: if request.auth != null && request.auth.uid == userId;
+      allow read: if request.auth != null && get(/databases/$(database)/documents/users/$(request.auth.uid)).data.role == 'admin';
+    }
+    
+    // Reports rules
+    match /reports/{reportId} {
+      // Anyone can read public reports
+      allow read: if resource.data.isPublic == true;
+      // Users can read their own reports
+      allow read: if request.auth != null && resource.data.userId == request.auth.uid;
+      // Admins can read all reports
+      allow read: if request.auth != null && get(/databases/$(database)/documents/users/$(request.auth.uid)).data.role == 'admin';
+      // Authenticated users can create reports
+      allow create: if request.auth != null && request.auth.uid == resource.data.userId;
+      // Users can update their own reports
+      allow update: if request.auth != null && resource.data.userId == request.auth.uid;
+      // Admins can update any report
+      allow update: if request.auth != null && get(/databases/$(database)/documents/users/$(request.auth.uid)).data.role == 'admin';
+      // Users can delete their own reports
+      allow delete: if request.auth != null && resource.data.userId == request.auth.uid;
+      // Admins can delete any report
+      allow delete: if request.auth != null && get(/databases/$(database)/documents/users/$(request.auth.uid)).data.role == 'admin';
+    }
+    
+    // Votes rules
+    match /votes/{voteId} {
+      // Users can read their own votes
+      allow read: if request.auth != null && resource.data.userId == request.auth.uid;
+      // Admins can read all votes
+      allow read: if request.auth != null && get(/databases/$(database)/documents/users/$(request.auth.uid)).data.role == 'admin';
+      // Authenticated users can create votes
+      allow create: if request.auth != null && request.auth.uid == resource.data.userId;
+      // Users can delete their own votes
+      allow delete: if request.auth != null && resource.data.userId == request.auth.uid;
+    }
+    
+    // Push tokens rules
+    match /pushTokens/{tokenId} {
+      // Users can read/write their own tokens
+      allow read, write: if request.auth != null && resource.data.userId == request.auth.uid;
+      // Admins can read all tokens
+      allow read: if request.auth != null && get(/databases/$(database)/documents/users/$(request.auth.uid)).data.role == 'admin';
+    }
+  }
+} 
