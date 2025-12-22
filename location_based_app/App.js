@@ -1,0 +1,196 @@
+import React from "react";
+import { View } from "react-native";
+import { NavigationContainer, DefaultTheme } from "@react-navigation/native";
+import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
+import { createNativeStackNavigator } from "@react-navigation/native-stack";
+import { useFonts, CrimsonPro_600SemiBold, CrimsonPro_700Bold } from "@expo-google-fonts/crimson-pro";
+import { Inter_400Regular, Inter_500Medium } from "@expo-google-fonts/inter";
+import { StatusBar } from "expo-status-bar";
+import { Ionicons } from "@expo/vector-icons";
+import { SafeAreaProvider, useSafeAreaInsets } from "react-native-safe-area-context";
+import { FiltersProvider } from "./context/FiltersContext";
+import { ThemeProvider, useTheme } from "./theme/ThemeContext";
+import PeopleNearbyScreen from "./screens/PeopleNearbyScreen";
+import MessagesScreen from "./screens/MessagesScreen";
+import ChatScreen from "./screens/ChatScreen";
+import ThreadScreen from "./screens/ThreadScreen";
+import ProfileScreen from "./screens/ProfileScreen";
+import SettingsScreen from "./screens/SettingsScreen";
+import { getMessageService } from "./services/messages";
+
+const Tab = createBottomTabNavigator();
+const Stack = createNativeStackNavigator();
+
+function MessagesStack() {
+  const { theme } = useTheme();
+  return (
+    <Stack.Navigator
+      screenOptions={{
+        headerStyle: { backgroundColor: theme.colors.bg },
+        headerTintColor: theme.colors.textPrimary,
+        headerTitleStyle: { fontFamily: theme.fonts.serifBold, fontSize: 20 },
+        contentStyle: { backgroundColor: theme.colors.bg },
+        headerBackTitle: "Messages", // iOS back button label
+      }}
+    >
+      <Stack.Screen 
+        name="MessagesHome" 
+        component={MessagesScreen} 
+        options={{ title: "Messages", headerShown: false }} 
+      />
+      <Stack.Screen 
+        name="Chat" 
+        component={ChatScreen} 
+        options={({ route }) => ({ 
+          title: route.params?.title || "Chat",
+          headerBackTitle: "Messages",
+        })} 
+      />
+      <Stack.Screen 
+        name="Thread" 
+        component={ThreadScreen} 
+        options={({ route }) => ({ title: route.params?.name || "Thread" })} 
+      />
+    </Stack.Navigator>
+  );
+}
+
+function ProfileStack() {
+  const { theme } = useTheme();
+  return (
+    <Stack.Navigator
+      screenOptions={{
+        headerStyle: { backgroundColor: theme.colors.bg },
+        headerTintColor: theme.colors.textPrimary,
+        headerTitleStyle: { fontFamily: theme.fonts.serifBold, fontSize: 20 },
+        contentStyle: { backgroundColor: theme.colors.bg }
+      }}
+    >
+      <Stack.Screen name="ProfileHome" component={ProfileScreen} options={{ headerShown: false }} />
+      <Stack.Screen name="Settings" component={SettingsScreen} options={{ title: "Settings" }} />
+    </Stack.Navigator>
+  );
+}
+
+function TabNavigator() {
+  const insets = useSafeAreaInsets();
+  const { theme } = useTheme();
+  const [unreadCount, setUnreadCount] = React.useState(0);
+  const tabBarHeight = 60 + insets.bottom;
+
+  // Watch for unread messages
+  React.useEffect(() => {
+    const CURRENT_USER = "demo-user"; // TODO: wire to auth
+    const messageService = getMessageService();
+    
+    const unsubscribe = messageService.watchThreads(CURRENT_USER, (threads) => {
+      const totalUnread = threads.reduce((sum, thread) => sum + (thread.unreadCount || 0), 0);
+      setUnreadCount(totalUnread);
+    });
+    
+    return unsubscribe;
+  }, []);
+
+  return (
+    <Tab.Navigator
+      screenOptions={({ route }) => ({
+        headerShown: false,
+        tabBarShowLabel: false, // Remove text labels
+        tabBarStyle: {
+          backgroundColor: theme.colors.bg2,
+          borderTopColor: theme.colors.border,
+          height: tabBarHeight,
+          paddingTop: 8,
+          paddingBottom: Math.max(insets.bottom, 8),
+        },
+        tabBarActiveTintColor: theme.colors.primary,
+        tabBarInactiveTintColor: theme.colors.textSecondary,
+        tabBarIcon: ({ color, size, focused }) => {
+          let icon;
+          if (route.name === "Home") {
+            icon = focused ? "home" : "home-outline";
+          } else if (route.name === "Messages") {
+            icon = focused ? "chatbubble" : "chatbubble-outline";
+          } else if (route.name === "Profile") {
+            icon = focused ? "person" : "person-outline";
+          } else {
+            icon = "ellipse";
+          }
+          
+          // Add unread notification dot for Messages
+          if (route.name === "Messages" && unreadCount > 0) {
+            return (
+              <View style={{ position: "relative" }}>
+                <Ionicons name={icon} size={28} color={color} />
+                <View
+                  style={{
+                    position: "absolute",
+                    top: -2,
+                    right: -2,
+                    width: 10,
+                    height: 10,
+                    borderRadius: 5,
+                    backgroundColor: theme.colors.accent,
+                    borderWidth: 2,
+                    borderColor: theme.colors.bg2,
+                  }}
+                />
+              </View>
+            );
+          }
+          
+          return <Ionicons name={icon} size={28} color={color} />;
+        },
+      })}
+    >
+      <Tab.Screen name="Home" component={PeopleNearbyScreen} options={{ title: "Home" }} />
+      <Tab.Screen name="Messages" component={MessagesStack} options={{ headerShown: false }} />
+      <Tab.Screen name="Profile" component={ProfileStack} options={{ headerShown: false }} />
+    </Tab.Navigator>
+  );
+}
+
+function ThemedStatusBar() {
+  const { theme } = useTheme();
+  return (
+    <StatusBar
+      style={theme.colors.statusBar === 'light' ? 'light' : 'dark'}
+      backgroundColor="transparent"
+      translucent
+    />
+  );
+}
+
+export default function App() {
+  const [loaded] = useFonts({
+    CrimsonPro_600SemiBold,
+    CrimsonPro_700Bold,
+    Inter_400Regular,
+    Inter_500Medium
+  });
+
+  if (!loaded) return null;
+
+  return (
+    <SafeAreaProvider>
+      <ThemeProvider>
+        <ThemedStatusBar />
+        <FiltersProvider>
+          <NavigationContainerWrapper>
+            <TabNavigator />
+          </NavigationContainerWrapper>
+        </FiltersProvider>
+      </ThemeProvider>
+    </SafeAreaProvider>
+  );
+}
+
+function NavigationContainerWrapper({ children }) {
+  const { theme } = useTheme();
+  const navTheme = {
+    ...DefaultTheme,
+    colors: { ...DefaultTheme.colors, background: theme.colors.bg }
+  };
+  return <NavigationContainer theme={navTheme}>{children}</NavigationContainer>;
+}
+
