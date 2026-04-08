@@ -1,11 +1,8 @@
 import * as Location from "expo-location";
+import { post, get } from "./api";
 
-/**
- * Calculate distance between two coordinates using Haversine formula
- * Returns distance in kilometers
- */
 export function distanceKm(lat1, lon1, lat2, lon2) {
-  const R = 6371; // Earth's radius in km
+  const R = 6371;
   const dLat = toRad(lat2 - lat1);
   const dLon = toRad(lon2 - lon1);
   const a =
@@ -22,9 +19,6 @@ function toRad(degrees) {
   return (degrees * Math.PI) / 180;
 }
 
-/**
- * Check if two users are within range
- */
 export function isInRange(userA, userB, radiusKm) {
   if (!userA.coords || !userB.coords) return false;
   const distance = distanceKm(
@@ -36,10 +30,6 @@ export function isInRange(userA, userB, radiusKm) {
   return distance <= radiusKm;
 }
 
-/**
- * Request location permission
- * Returns: 'granted' | 'denied' | 'unknown'
- */
 export async function requestLocationPermission() {
   try {
     const { status } = await Location.requestForegroundPermissionsAsync();
@@ -50,9 +40,6 @@ export async function requestLocationPermission() {
   }
 }
 
-/**
- * Get current location permission status
- */
 export async function getLocationPermissionStatus() {
   try {
     const { status } = await Location.getForegroundPermissionsAsync();
@@ -65,25 +52,18 @@ export async function getLocationPermissionStatus() {
   }
 }
 
-/**
- * Get current location (only if permission granted)
- * Returns: { latitude, longitude } | null
- * Note: Never expose exact coordinates to UI - only use for distance calculations
- */
 export async function getCurrentLocation() {
   try {
     const permission = await getLocationPermissionStatus();
-    if (permission !== "granted") {
-      return null;
-    }
+    if (permission !== "granted") return null;
 
     const location = await Location.getCurrentPositionAsync({
-      accuracy: Location.Accuracy.Balanced // Coarse accuracy for privacy
+      accuracy: Location.Accuracy.Balanced,
     });
 
     return {
       latitude: location.coords.latitude,
-      longitude: location.coords.longitude
+      longitude: location.coords.longitude,
     };
   } catch (error) {
     console.error("Error getting current location:", error);
@@ -91,6 +71,15 @@ export async function getCurrentLocation() {
   }
 }
 
+export async function updateUserLocation(lat, lng) {
+  return post("/api/users/me/location", { latitude: lat, longitude: lng });
+}
 
-
-
+export async function getNearbyPeople(radius, minAge, maxAge) {
+  const params = new URLSearchParams({
+    radius: String(radius),
+    minAge: String(minAge),
+    maxAge: String(maxAge),
+  });
+  return get(`/api/discover?${params}`);
+}

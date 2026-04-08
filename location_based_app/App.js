@@ -16,7 +16,6 @@ import ChatScreen from "./screens/ChatScreen";
 import ThreadScreen from "./screens/ThreadScreen";
 import ProfileScreen from "./screens/ProfileScreen";
 import SettingsScreen from "./screens/SettingsScreen";
-import { getMessageService } from "./services/messages";
 
 const Tab = createBottomTabNavigator();
 const Stack = createNativeStackNavigator();
@@ -30,26 +29,26 @@ function MessagesStack() {
         headerTintColor: theme.colors.textPrimary,
         headerTitleStyle: { fontFamily: theme.fonts.serifBold, fontSize: 20 },
         contentStyle: { backgroundColor: theme.colors.bg },
-        headerBackTitle: "Messages", // iOS back button label
+        headerBackTitle: "Messages",
       }}
     >
-      <Stack.Screen 
-        name="MessagesHome" 
-        component={MessagesScreen} 
-        options={{ title: "Messages", headerShown: false }} 
+      <Stack.Screen
+        name="MessagesHome"
+        component={MessagesScreen}
+        options={{ title: "Messages", headerShown: false }}
       />
-      <Stack.Screen 
-        name="Chat" 
-        component={ChatScreen} 
-        options={({ route }) => ({ 
+      <Stack.Screen
+        name="Chat"
+        component={ChatScreen}
+        options={({ route }) => ({
           title: route.params?.title || "Chat",
           headerBackTitle: "Messages",
-        })} 
+        })}
       />
-      <Stack.Screen 
-        name="Thread" 
-        component={ThreadScreen} 
-        options={({ route }) => ({ title: route.params?.name || "Thread" })} 
+      <Stack.Screen
+        name="Thread"
+        component={ThreadScreen}
+        options={({ route }) => ({ title: route.params?.name || "Thread" })}
       />
     </Stack.Navigator>
   );
@@ -63,7 +62,7 @@ function ProfileStack() {
         headerStyle: { backgroundColor: theme.colors.bg },
         headerTintColor: theme.colors.textPrimary,
         headerTitleStyle: { fontFamily: theme.fonts.serifBold, fontSize: 20 },
-        contentStyle: { backgroundColor: theme.colors.bg }
+        contentStyle: { backgroundColor: theme.colors.bg },
       }}
     >
       <Stack.Screen name="ProfileHome" component={ProfileScreen} options={{ headerShown: false }} />
@@ -75,27 +74,13 @@ function ProfileStack() {
 function TabNavigator() {
   const insets = useSafeAreaInsets();
   const { theme } = useTheme();
-  const [unreadCount, setUnreadCount] = React.useState(0);
   const tabBarHeight = 60 + insets.bottom;
-
-  // Watch for unread messages
-  React.useEffect(() => {
-    const CURRENT_USER = "demo-user"; // TODO: wire to auth
-    const messageService = getMessageService();
-    
-    const unsubscribe = messageService.watchThreads(CURRENT_USER, (threads) => {
-      const totalUnread = threads.reduce((sum, thread) => sum + (thread.unreadCount || 0), 0);
-      setUnreadCount(totalUnread);
-    });
-    
-    return unsubscribe;
-  }, []);
 
   return (
     <Tab.Navigator
       screenOptions={({ route }) => ({
         headerShown: false,
-        tabBarShowLabel: false, // Remove text labels
+        tabBarShowLabel: false,
         tabBarStyle: {
           backgroundColor: theme.colors.bg2,
           borderTopColor: theme.colors.border,
@@ -105,7 +90,7 @@ function TabNavigator() {
         },
         tabBarActiveTintColor: theme.colors.primary,
         tabBarInactiveTintColor: theme.colors.textSecondary,
-        tabBarIcon: ({ color, size, focused }) => {
+        tabBarIcon: ({ color, focused }) => {
           let icon;
           if (route.name === "Home") {
             icon = focused ? "home" : "home-outline";
@@ -116,29 +101,6 @@ function TabNavigator() {
           } else {
             icon = "ellipse";
           }
-          
-          // Add unread notification dot for Messages
-          if (route.name === "Messages" && unreadCount > 0) {
-            return (
-              <View style={{ position: "relative" }}>
-                <Ionicons name={icon} size={28} color={color} />
-                <View
-                  style={{
-                    position: "absolute",
-                    top: -2,
-                    right: -2,
-                    width: 10,
-                    height: 10,
-                    borderRadius: 5,
-                    backgroundColor: theme.colors.accent,
-                    borderWidth: 2,
-                    borderColor: theme.colors.bg2,
-                  }}
-                />
-              </View>
-            );
-          }
-          
           return <Ionicons name={icon} size={28} color={color} />;
         },
       })}
@@ -154,7 +116,7 @@ function ThemedStatusBar() {
   const { theme } = useTheme();
   return (
     <StatusBar
-      style={theme.colors.statusBar === 'light' ? 'light' : 'dark'}
+      style={theme.colors.statusBar === "light" ? "light" : "dark"}
       backgroundColor="transparent"
       translucent
     />
@@ -166,7 +128,7 @@ export default function App() {
     CrimsonPro_600SemiBold,
     CrimsonPro_700Bold,
     Inter_400Regular,
-    Inter_500Medium
+    Inter_500Medium,
   });
 
   if (!loaded) return null;
@@ -189,8 +151,7 @@ function NavigationContainerWrapper({ children }) {
   const { theme } = useTheme();
   const navTheme = {
     ...DefaultTheme,
-    colors: { ...DefaultTheme.colors, background: theme.colors.bg }
+    colors: { ...DefaultTheme.colors, background: theme.colors.bg },
   };
   return <NavigationContainer theme={navTheme}>{children}</NavigationContainer>;
 }
-

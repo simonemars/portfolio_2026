@@ -1,31 +1,11 @@
 import React, { useState, useEffect } from "react";
-import {
-  View,
-  Text,
-  StyleSheet,
-  Modal,
-  Pressable,
-  ScrollView,
-  Switch
-} from "react-native";
+import { View, Text, StyleSheet, Modal, Pressable, ScrollView } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { Ionicons } from "@expo/vector-icons";
 import { useFilters } from "../context/FiltersContext";
 import { useTheme } from "../theme/ThemeContext";
 
 const RADIUS_PRESETS = [1, 3, 5, 10, 25];
-const INTERESTS = [
-  "Hiking",
-  "Coffee",
-  "Music",
-  "Art",
-  "Food",
-  "Sports",
-  "Books",
-  "Travel",
-  "Photography",
-  "Gaming"
-];
 const AGE_PRESETS = [
   { label: "18–25", value: [18, 25] },
   { label: "21–30", value: [21, 30] },
@@ -36,36 +16,24 @@ const AGE_PRESETS = [
 export default function FilterSheet({ visible, onClose }) {
   const insets = useSafeAreaInsets();
   const { theme } = useTheme();
-  const { filters, locationState, updateFilters, resetFilters, updateLocationState } = useFilters();
+  const { filters, updateFilters, resetFilters } = useFilters();
   const [localFilters, setLocalFilters] = useState(filters);
-  const [localInRangeSharing, setLocalInRangeSharing] = useState(locationState.inRangeSharing);
 
   useEffect(() => {
     if (visible) {
       setLocalFilters(filters);
-      setLocalInRangeSharing(locationState.inRangeSharing);
     }
-  }, [visible, filters, locationState.inRangeSharing]);
+  }, [visible, filters]);
 
   const handleApply = () => {
     updateFilters(localFilters);
-    updateLocationState({ inRangeSharing: localInRangeSharing });
     onClose();
   };
 
   const handleReset = () => {
-    const defaultFilters = { radiusKm: 5, interests: [], age: [18, 99] };
+    const defaultFilters = { radiusKm: 5, age: [18, 99] };
     setLocalFilters(defaultFilters);
     resetFilters();
-  };
-
-  const toggleInterest = (interest) => {
-    setLocalFilters((prev) => ({
-      ...prev,
-      interests: prev.interests.includes(interest)
-        ? prev.interests.filter((i) => i !== interest)
-        : [...prev.interests, interest]
-    }));
   };
 
   return (
@@ -122,7 +90,7 @@ export default function FilterSheet({ visible, onClose }) {
                   onPress={(e) => {
                     const { locationX, width } = e.nativeEvent;
                     const percentage = Math.max(0, Math.min(1, locationX / width));
-                    const newValue = 0.5 + percentage * 49.5; // 0.5 to 50
+                    const newValue = 0.5 + percentage * 49.5;
                     setLocalFilters((prev) => ({ ...prev, radiusKm: Math.round(newValue * 2) / 2 }));
                   }}
                 >
@@ -143,58 +111,6 @@ export default function FilterSheet({ visible, onClose }) {
                   <Text style={[styles.sliderLabel, { fontFamily: theme.fonts.serif, color: theme.colors.textSecondary }]}>0.5</Text>
                   <Text style={[styles.sliderLabel, { fontFamily: theme.fonts.serif, color: theme.colors.textSecondary }]}>50</Text>
                 </View>
-              </View>
-            </View>
-
-            {/* In-Range Sharing */}
-            <View style={[styles.section, { borderBottomColor: theme.colors.border }]}>
-              <View style={styles.switchRow}>
-                <View style={styles.switchContent}>
-                  <Text style={[styles.sectionTitle, { fontFamily: theme.fonts.serifBold, color: theme.colors.textPrimary }]}>In-Range Sharing</Text>
-                  <Text style={[styles.switchCaption, { fontFamily: theme.fonts.serif, color: theme.colors.textSecondary }]}>
-                    Shares in-range only — never exact location.
-                  </Text>
-                </View>
-                <Switch
-                  value={localInRangeSharing}
-                  onValueChange={setLocalInRangeSharing}
-                  trackColor={{
-                    false: theme.colors.border,
-                    true: theme.colors.accent + "80"
-                  }}
-                  thumbColor={localInRangeSharing ? theme.colors.accent : theme.colors.textSecondary}
-                  disabled={locationState.permission !== "granted"}
-                />
-              </View>
-            </View>
-
-            {/* Interests */}
-            <View style={[styles.section, { borderBottomColor: theme.colors.border }]}>
-              <Text style={[styles.sectionTitle, { fontFamily: theme.fonts.serifBold, color: theme.colors.textPrimary }]}>Interests</Text>
-              <View style={styles.interestsGrid}>
-                {INTERESTS.map((interest) => {
-                  const isSelected = localFilters.interests.includes(interest);
-                  return (
-                    <Pressable
-                      key={interest}
-                      onPress={() => toggleInterest(interest)}
-                      style={[
-                        styles.interestChip,
-                        { backgroundColor: theme.colors.surface, borderColor: theme.colors.border },
-                        isSelected && { backgroundColor: theme.colors.accent + "30", borderColor: theme.colors.accent }
-                      ]}
-                    >
-                      <Text
-                        style={[
-                          styles.interestText,
-                          { fontFamily: theme.fonts.serif, color: isSelected ? theme.colors.accent : theme.colors.textPrimary }
-                        ]}
-                      >
-                        {interest}
-                      </Text>
-                    </Pressable>
-                  );
-                })}
               </View>
             </View>
 
@@ -375,33 +291,6 @@ const styles = StyleSheet.create({
   sliderLabel: {
     fontSize: 12
   },
-  switchRow: {
-    flexDirection: "row",
-    alignItems: "center",
-    justifyContent: "space-between"
-  },
-  switchContent: {
-    flex: 1,
-    marginRight: 16
-  },
-  switchCaption: {
-    fontSize: 13,
-    marginTop: 4
-  },
-  interestsGrid: {
-    flexDirection: "row",
-    flexWrap: "wrap",
-    gap: 8
-  },
-  interestChip: {
-    paddingHorizontal: 16,
-    paddingVertical: 10,
-    borderRadius: 20,
-    borderWidth: 1
-  },
-  interestText: {
-    fontSize: 14
-  },
   ageContainer: {
     marginTop: 12,
     gap: 16
@@ -454,4 +343,3 @@ const styles = StyleSheet.create({
     fontWeight: "600"
   }
 });
-

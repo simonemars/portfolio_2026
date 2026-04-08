@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef } from "react";
+import React, { useState, useEffect, useRef, useCallback } from "react";
 import {
   View,
   TextInput,
@@ -8,14 +8,14 @@ import {
   Platform,
   Pressable,
   StyleSheet,
+  ActivityIndicator,
 } from "react-native";
-import { useRoute, useNavigation } from "@react-navigation/native";
+import { useRoute, useNavigation, useFocusEffect } from "@react-navigation/native";
 import { useTheme } from "../theme/ThemeContext";
-import { getMessageService } from "../services/messages";
+import { getMessages, sendMessage } from "../services/messages";
 import Avatar from "../components/Avatar";
 
-const CURRENT_USER = "demo-user"; // TODO: wire to auth
-const messageService = getMessageService();
+const POLL_INTERVAL = 3000;
 
 export default function ChatScreen() {
   const { params } = useRoute();
@@ -23,42 +23,53 @@ export default function ChatScreen() {
   const { theme } = useTheme();
   const [messages, setMessages] = useState([]);
   const [text, setText] = useState("");
+  const [loading, setLoading] = useState(true);
   const flatListRef = useRef(null);
+  const prevCountRef = useRef(0);
 
-  // Fix back label to show "Messages"
   useEffect(() => {
     navigation.setOptions({
       title: params?.title ?? "Chat",
-      headerBackTitle: "Messages", // iOS back button label
+      headerBackTitle: "Messages",
     });
   }, [navigation, params?.title]);
 
-  // Watch messages for this thread
-  useEffect(() => {
+  const fetchMessages = useCallback(async () => {
     if (!params?.threadId) return;
-    
-    const unsubscribe = messageService.watchMessages(params.threadId, (newMessages) => {
-      setMessages(newMessages);
-      // Scroll to bottom when new messages arrive
-      setTimeout(() => {
-        flatListRef.current?.scrollToEnd({ animated: true });
-      }, 100);
-    });
-    
-    return unsubscribe;
+    try {
+      const data = await getMessages(params.threadId);
+      const msgs = data ?? [];
+      setMessages(msgs);
+      if (msgs.length > prevCountRef.current) {
+        setTimeout(() => flatListRef.current?.scrollToEnd({ animated: true }), 100);
+      }
+      prevCountRef.current = msgs.length;
+    } catch (err) {
+      console.error("Failed to load messages:", err);
+    } finally {
+      setLoading(false);
+    }
   }, [params?.threadId]);
+
+  useFocusEffect(
+    useCallback(() => {
+      fetchMessages();
+      const id = setInterval(fetchMessages, POLL_INTERVAL);
+      return () => clearInterval(id);
+    }, [fetchMessages])
+  );
 
   const send = async () => {
     const trimmed = text.trim();
     if (!trimmed || !params?.threadId) return;
 
     setText("");
-    
-    await messageService.sendMessage(params.threadId, {
-      senderId: CURRENT_USER,
-      threadId: params.threadId,
-      text: trimmed,
-    });
+    try {
+      await sendMessage(params.threadId, trimmed);
+      await fetchMessages();
+    } catch (err) {
+      console.error("Failed to send message:", err);
+    }
   };
 
   const formatTime = (timestamp) => {
@@ -66,6 +77,14 @@ export default function ChatScreen() {
     const date = new Date(timestamp);
     return date.toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" });
   };
+
+  if (loading) {
+    return (
+      <View style={[styles.container, styles.centered, { backgroundColor: theme.colors.bg }]}>
+        <ActivityIndicator color={theme.colors.accent} />
+      </View>
+    );
+  }
 
   return (
     <KeyboardAvoidingView
@@ -79,7 +98,7 @@ export default function ChatScreen() {
         keyExtractor={(item) => item.id}
         contentContainerStyle={styles.messagesList}
         renderItem={({ item }) => {
-          const mine = item.senderId === CURRENT_USER;
+          const mine = item.isOwn;
           return (
             <View
               style={[
@@ -89,10 +108,7 @@ export default function ChatScreen() {
             >
               {!mine && (
                 <View style={styles.messageAvatar}>
-                  <Avatar
-                    name={params?.title}
-                    size={32}
-                  />
+                  <Avatar name={params?.title} size={32} />
                 </View>
               )}
               <View
@@ -207,6 +223,7 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
   },
+  centered: { justifyContent: "center", alignItems: "center" },
   messagesList: {
     padding: 16,
     paddingBottom: 8,
@@ -270,4 +287,3 @@ const styles = StyleSheet.create({
     fontSize: 16,
   },
 });
-

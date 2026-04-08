@@ -1,29 +1,28 @@
-import React, { createContext, useContext, useState, useCallback } from "react";
+import React, { createContext, useContext, useState, useCallback, useEffect, useRef } from "react";
+import { getNearbyPeople } from "../services/location";
 
 const FiltersContext = createContext();
 
+const DEFAULT_FILTERS = { radiusKm: 5, age: [18, 99] };
+
 export function FiltersProvider({ children }) {
-  const [filters, setFilters] = useState({
-    radiusKm: 5,
-    interests: [],
-    age: [18, 99]
-  });
+  const [filters, setFilters] = useState(DEFAULT_FILTERS);
 
   const [locationState, setLocationState] = useState({
     permission: "unknown",
-    inRangeSharing: false
+    inRangeSharing: false,
   });
+
+  const [nearbyPeople, setNearbyPeople] = useState([]);
+  const [nearbyLoading, setNearbyLoading] = useState(false);
+  const fetchIdRef = useRef(0);
 
   const updateFilters = useCallback((updates) => {
     setFilters((prev) => ({ ...prev, ...updates }));
   }, []);
 
   const resetFilters = useCallback(() => {
-    setFilters({
-      radiusKm: 5,
-      interests: [],
-      age: [18, 99]
-    });
+    setFilters(DEFAULT_FILTERS);
   }, []);
 
   const updateLocationState = useCallback((updates) => {
@@ -32,11 +31,39 @@ export function FiltersProvider({ children }) {
 
   const getActiveFilterCount = useCallback(() => {
     let count = 0;
-    if (filters.radiusKm !== 5) count++;
-    if (filters.interests.length > 0) count++;
-    if (filters.age[0] !== 18 || filters.age[1] !== 99) count++;
+    if (filters.radiusKm !== DEFAULT_FILTERS.radiusKm) count++;
+    if (filters.age[0] !== DEFAULT_FILTERS.age[0] || filters.age[1] !== DEFAULT_FILTERS.age[1]) count++;
     return count;
   }, [filters]);
+
+  const fetchNearby = useCallback(async () => {
+    if (locationState.permission !== "granted" || !locationState.inRangeSharing) {
+      setNearbyPeople([]);
+      return;
+    }
+
+    const id = ++fetchIdRef.current;
+    setNearbyLoading(true);
+    try {
+      const data = await getNearbyPeople(filters.radiusKm, filters.age[0], filters.age[1]);
+      if (fetchIdRef.current === id) {
+        setNearbyPeople(data ?? []);
+      }
+    } catch (err) {
+      console.error("Failed to fetch nearby people:", err);
+      if (fetchIdRef.current === id) {
+        setNearbyPeople([]);
+      }
+    } finally {
+      if (fetchIdRef.current === id) {
+        setNearbyLoading(false);
+      }
+    }
+  }, [filters, locationState.permission, locationState.inRangeSharing]);
+
+  useEffect(() => {
+    fetchNearby();
+  }, [fetchNearby]);
 
   return (
     <FiltersContext.Provider
@@ -46,7 +73,10 @@ export function FiltersProvider({ children }) {
         updateFilters,
         resetFilters,
         updateLocationState,
-        activeFilterCount: getActiveFilterCount()
+        activeFilterCount: getActiveFilterCount(),
+        nearbyPeople,
+        nearbyLoading,
+        refreshNearby: fetchNearby,
       }}
     >
       {children}
@@ -61,7 +91,3 @@ export function useFilters() {
   }
   return context;
 }
-
-
-
-

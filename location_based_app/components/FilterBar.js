@@ -4,30 +4,24 @@ import { useFilters } from "../context/FiltersContext";
 import { useTheme } from "../theme/ThemeContext";
 
 export default function FilterBar({ onOpen }) {
-  const { filters, activeFilterCount } = useFilters();
+  const { filters } = useFilters();
   const { theme } = useTheme();
 
+  const ageLabel =
+    filters.age[0] === 18 && filters.age[1] === 99
+      ? "Any age"
+      : `${filters.age[0]}–${filters.age[1]}`;
+
   const chips = [
-    { label: `${Math.round(filters.radiusKm)} km`, onPress: onOpen },
-    {
-      label: `Interests${filters.interests.length > 0 ? ` (${filters.interests.length})` : ""}`,
-      onPress: onOpen
-    },
-    {
-      label: "Age",
-      onPress: onOpen
-    },
-    {
-      label: `Filters${activeFilterCount > 0 ? ` (${activeFilterCount})` : ""}`,
-      onPress: onOpen
-    }
+    { key: "radius", label: `${Math.round(filters.radiusKm)} km`, onPress: onOpen },
+    { key: "age", label: ageLabel, onPress: onOpen }
   ];
 
   return (
     <View style={[styles.container, { backgroundColor: theme.colors.bg, borderBottomColor: theme.colors.border }]}>
-      {chips.map((chip, index) => (
+      {chips.map((chip) => (
         <Pressable
-          key={index}
+          key={chip.key}
           onPress={chip.onPress}
           style={({ pressed }) => [
             styles.chip,
@@ -47,21 +41,20 @@ const styles = StyleSheet.create({
     height: 48,
     paddingHorizontal: 20,
     flexDirection: "row",
-    gap: 10,
+    gap: 12,
     alignItems: "center",
     justifyContent: "center",
     borderBottomWidth: 1
   },
   chip: {
     height: 40,
-    paddingHorizontal: 18,
+    paddingHorizontal: 20,
     borderRadius: 20,
     borderWidth: 1,
     alignItems: "center",
     justifyContent: "center",
-    minWidth: 60,
     flex: 1,
-    maxWidth: 120
+    maxWidth: 200
   },
   chipPressed: {
     opacity: 0.7,
@@ -71,4 +64,3 @@ const styles = StyleSheet.create({
     fontSize: 14
   }
 });
-

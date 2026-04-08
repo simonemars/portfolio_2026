@@ -1,13 +1,17 @@
-// Message service abstraction
+import { get, post } from "./api";
 
-export const getMessageService = () => {
-  const { hasFirebase } = require('./firebase');
-  
-  if (hasFirebase) {
-    return require('./messages.firestore').service;
-  } else {
-    return require('./messages.memory').service;
-  }
-};
+export async function getThreads() {
+  return get("/api/threads");
+}
 
+export async function getMessages(threadId) {
+  return get(`/api/threads/${threadId}/messages`);
+}
 
+export async function sendMessage(threadId, text) {
+  return post(`/api/threads/${threadId}/messages`, { text });
+}
+
+export async function createThread(otherUserId) {
+  return post("/api/threads", { userId: otherUserId });
+}

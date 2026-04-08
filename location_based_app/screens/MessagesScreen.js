@@ -1,23 +1,36 @@
-import React, { useState, useEffect } from "react";
-import { View, FlatList, StyleSheet, Pressable, Text } from "react-native";
+import React, { useState, useEffect, useCallback } from "react";
+import { View, FlatList, StyleSheet, Pressable, Text, ActivityIndicator } from "react-native";
+import { useFocusEffect } from "@react-navigation/native";
 import ScreenHeader from "../components/ScreenHeader";
 import { useTheme } from "../theme/ThemeContext";
-import { getMessageService } from "../services/messages";
+import { getThreads } from "../services/messages";
 import Avatar from "../components/Avatar";
 
-const CURRENT_USER = "demo-user"; // TODO: wire to auth
-const messageService = getMessageService();
+const POLL_INTERVAL = 5000;
 
 export default function MessagesScreen({ navigation }) {
   const { theme } = useTheme();
   const [threads, setThreads] = useState([]);
+  const [loading, setLoading] = useState(true);
 
-  useEffect(() => {
-    const unsubscribe = messageService.watchThreads(CURRENT_USER, (newThreads) => {
-      setThreads(newThreads);
-    });
-    return unsubscribe;
+  const fetchThreads = useCallback(async () => {
+    try {
+      const data = await getThreads();
+      setThreads(data ?? []);
+    } catch (err) {
+      console.error("Failed to load threads:", err);
+    } finally {
+      setLoading(false);
+    }
   }, []);
+
+  useFocusEffect(
+    useCallback(() => {
+      fetchThreads();
+      const id = setInterval(fetchThreads, POLL_INTERVAL);
+      return () => clearInterval(id);
+    }, [fetchThreads])
+  );
 
   const formatTime = (timestamp) => {
     if (!timestamp) return "";
@@ -34,6 +47,14 @@ export default function MessagesScreen({ navigation }) {
     if (days < 7) return `${days}d`;
     return date.toLocaleDateString();
   };
+
+  if (loading) {
+    return (
+      <View style={[styles.wrap, styles.centered, { backgroundColor: theme.colors.bg }]}>
+        <ActivityIndicator color={theme.colors.accent} />
+      </View>
+    );
+  }
 
   return (
     <View style={[styles.wrap, { backgroundColor: theme.colors.bg }]}>
@@ -145,6 +166,7 @@ export default function MessagesScreen({ navigation }) {
 
 const styles = StyleSheet.create({
   wrap: { flex: 1 },
+  centered: { justifyContent: "center", alignItems: "center" },
   listContent: {
     paddingTop: 16,
     paddingBottom: 20,
@@ -200,4 +222,3 @@ const styles = StyleSheet.create({
     fontSize: 16,
   },
 });
-
