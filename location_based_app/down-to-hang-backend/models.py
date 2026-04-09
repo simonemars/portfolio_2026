@@ -3,7 +3,7 @@ from sqlalchemy import (
     Column, Integer, String, Boolean, ForeignKey, DateTime, Text,
     UniqueConstraint,
 )
-from geoalchemy2 import Geometry
+from geoalchemy2 import Geography
 from database import Base
 
 
@@ -15,7 +15,7 @@ class User(Base):
     name = Column(String(120), nullable=False, default="")
     age = Column(Integer, nullable=True)
     bio = Column(String(500), nullable=True, default="")
-    location = Column(Geometry(geometry_type="POINT", srid=4326), nullable=True)
+    location = Column(Geography(geometry_type="POINT", srid=4326), nullable=True)
     share_in_range = Column(Boolean, default=False)
 
 

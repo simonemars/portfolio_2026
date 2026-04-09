@@ -4,14 +4,13 @@ from typing import Optional
 
 import jwt
 from jwt import PyJWKClient
-from fastapi import FastAPI, Depends, HTTPException, Query, Request
+from fastapi import FastAPI, Depends, HTTPException
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.security import HTTPBearer, HTTPAuthorizationCredentials
 from pydantic import BaseModel
-from sqlalchemy import or_, and_, func, cast
+from sqlalchemy import or_, and_, func
 from sqlalchemy.orm import Session
-from geoalchemy2 import Geography
-from geoalchemy2.functions import ST_DWithin, ST_MakePoint, ST_SetSRID
+from geoalchemy2.functions import ST_DWithin
 
 from database import engine, get_db, Base
 from models import User, FriendRequest, Friendship, Thread, ThreadParticipant, Message
@@ -82,19 +81,20 @@ def get_current_user(
 # ---------------------------------------------------------------------------
 # Pydantic schemas
 # ---------------------------------------------------------------------------
-class LocationIn(BaseModel):
+class DiscoverIn(BaseModel):
     latitude: float
     longitude: float
+    radius_km: float = 5
+    min_age: int = 18
+    max_age: int = 99
 
 
-class DiscoverPerson(BaseModel):
+class NearbyUserResponse(BaseModel):
     id: int
     name: str
     bio: Optional[str] = ""
     age: Optional[int] = None
-    distanceKm: Optional[float] = None
-    isFriend: bool = False
-    inRange: bool = True
+    distanceKm: float
 
 
 class FriendOut(BaseModel):
@@ -145,34 +145,23 @@ class MessageOut(BaseModel):
 
 
 # ---------------------------------------------------------------------------
-# Location & Discover
+# Discover (single POST — updates caller location + returns nearby users)
 # ---------------------------------------------------------------------------
-@app.post("/api/users/me/location")
-def update_location(
-    body: LocationIn,
-    db: Session = Depends(get_db),
-    current_user: User = Depends(get_current_user),
-):
-    point = func.ST_SetSRID(func.ST_MakePoint(body.longitude, body.latitude), 4326)
-    current_user.location = point
-    current_user.share_in_range = True
-    db.commit()
-    return {"ok": True}
-
-
-@app.get("/api/discover", response_model=list[DiscoverPerson])
+@app.post("/api/discover", response_model=list[NearbyUserResponse])
 def discover(
-    radius: float = Query(5, description="Radius in km"),
-    minAge: int = Query(18),
-    maxAge: int = Query(99),
+    body: DiscoverIn,
     db: Session = Depends(get_db),
     current_user: User = Depends(get_current_user),
 ):
-    if current_user.location is None:
-        return []
+    # 1. Update the requesting user's location (lng, lat order for PostGIS)
+    my_point = func.ST_SetSRID(func.ST_MakePoint(body.longitude, body.latitude), 4326)
+    current_user.location = my_point
+    current_user.share_in_range = True
+    db.flush()
 
-    radius_m = radius * 1000
+    radius_m = body.radius_km * 1000
 
+    # Subquery: IDs of existing friends (both directions)
     friend_ids_q = db.query(Friendship.user_id_2).filter(
         Friendship.user_id_1 == current_user.id
     ).union(
@@ -181,10 +170,9 @@ def discover(
         )
     ).subquery()
 
-    # Build a SQL-level reference to the current user's location to avoid
-    # Python-side WKB hex being sent as a text literal.
+    # SQL-level reference to the freshly flushed location
     my_loc = (
-        db.query(cast(User.location, Geography))
+        db.query(User.location)
         .filter(User.id == current_user.id)
         .scalar_subquery()
     )
@@ -192,39 +180,30 @@ def discover(
     q = (
         db.query(
             User,
-            func.ST_Distance(
-                cast(User.location, Geography), my_loc
-            ).label("distance_m"),
+            func.ST_Distance(User.location, my_loc).label("distance_m"),
         )
         .filter(
             User.id != current_user.id,
             User.location.isnot(None),
             User.share_in_range.is_(True),
-            ST_DWithin(
-                cast(User.location, Geography),
-                my_loc,
-                radius_m,
-            ),
+            ST_DWithin(User.location, my_loc, radius_m),
             ~User.id.in_(friend_ids_q),
         )
     )
 
-    if minAge is not None:
-        q = q.filter(or_(User.age.is_(None), User.age >= minAge))
-    if maxAge is not None:
-        q = q.filter(or_(User.age.is_(None), User.age <= maxAge))
+    q = q.filter(or_(User.age.is_(None), User.age >= body.min_age))
+    q = q.filter(or_(User.age.is_(None), User.age <= body.max_age))
 
     results = q.order_by("distance_m").all()
+    db.commit()
 
     return [
-        DiscoverPerson(
+        NearbyUserResponse(
             id=u.id,
             name=u.name,
             bio=u.bio or "",
             age=u.age,
-            distanceKm=round(dist / 1000, 1) if dist else None,
-            isFriend=False,
-            inRange=True,
+            distanceKm=round(dist / 1000, 1) if dist else 0,
         )
         for u, dist in results
     ]
