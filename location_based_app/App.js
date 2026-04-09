@@ -1,5 +1,5 @@
-import React from "react";
-import { View } from "react-native";
+import React, { useState, useEffect } from "react";
+import { View, ActivityIndicator, StyleSheet } from "react-native";
 import { NavigationContainer, DefaultTheme } from "@react-navigation/native";
 import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
@@ -10,12 +10,15 @@ import { Ionicons } from "@expo/vector-icons";
 import { SafeAreaProvider, useSafeAreaInsets } from "react-native-safe-area-context";
 import { FiltersProvider } from "./context/FiltersContext";
 import { ThemeProvider, useTheme } from "./theme/ThemeContext";
+import { supabase } from "./services/supabase";
+import { setAuthToken, clearAuthToken } from "./services/api";
 import PeopleNearbyScreen from "./screens/PeopleNearbyScreen";
 import MessagesScreen from "./screens/MessagesScreen";
 import ChatScreen from "./screens/ChatScreen";
 import ThreadScreen from "./screens/ThreadScreen";
 import ProfileScreen from "./screens/ProfileScreen";
 import SettingsScreen from "./screens/SettingsScreen";
+import AuthScreen from "./screens/AuthScreen";
 
 const Tab = createBottomTabNavigator();
 const Stack = createNativeStackNavigator();
@@ -123,7 +126,23 @@ function ThemedStatusBar() {
   );
 }
 
+function LoadingScreen() {
+  const { theme } = useTheme();
+  return (
+    <View style={[loadingStyles.container, { backgroundColor: theme.colors.bg }]}>
+      <ActivityIndicator size="large" color={theme.colors.accent} />
+    </View>
+  );
+}
+
+const loadingStyles = StyleSheet.create({
+  container: { flex: 1, justifyContent: "center", alignItems: "center" },
+});
+
 export default function App() {
+  const [session, setSession] = useState(null);
+  const [authReady, setAuthReady] = useState(false);
+
   const [loaded] = useFonts({
     CrimsonPro_600SemiBold,
     CrimsonPro_700Bold,
@@ -131,17 +150,44 @@ export default function App() {
     Inter_500Medium,
   });
 
-  if (!loaded) return null;
+  useEffect(() => {
+    supabase.auth.getSession().then(({ data: { session: s } }) => {
+      setSession(s);
+      if (s?.access_token) setAuthToken(s.access_token);
+      setAuthReady(true);
+    });
+
+    const { data: { subscription } } = supabase.auth.onAuthStateChange(
+      (_event, s) => {
+        setSession(s);
+        if (s?.access_token) {
+          setAuthToken(s.access_token);
+        } else {
+          clearAuthToken();
+        }
+      }
+    );
+
+    return () => subscription.unsubscribe();
+  }, []);
+
+  if (!loaded || !authReady) return null;
 
   return (
     <SafeAreaProvider>
       <ThemeProvider>
         <ThemedStatusBar />
-        <FiltersProvider>
+        {session ? (
+          <FiltersProvider>
+            <NavigationContainerWrapper>
+              <TabNavigator />
+            </NavigationContainerWrapper>
+          </FiltersProvider>
+        ) : (
           <NavigationContainerWrapper>
-            <TabNavigator />
+            <AuthScreen />
           </NavigationContainerWrapper>
-        </FiltersProvider>
+        )}
       </ThemeProvider>
     </SafeAreaProvider>
   );

@@ -5,3 +5,4 @@ geoalchemy2
 psycopg2-binary
 pydantic
 python-dotenv
+pyjwt[crypto]

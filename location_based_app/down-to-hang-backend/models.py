@@ -11,6 +11,7 @@ class User(Base):
     __tablename__ = "users"
 
     id = Column(Integer, primary_key=True, index=True)
+    auth_id = Column(String, unique=True, index=True, nullable=True)
     name = Column(String(120), nullable=False, default="")
     age = Column(Integer, nullable=True)
     bio = Column(String(500), nullable=True, default="")

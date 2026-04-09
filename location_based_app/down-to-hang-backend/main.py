@@ -1,8 +1,12 @@
+import os
 from datetime import datetime, timezone
 from typing import Optional
 
-from fastapi import FastAPI, Depends, HTTPException, Query
+import jwt
+from jwt import PyJWKClient
+from fastapi import FastAPI, Depends, HTTPException, Query, Request
 from fastapi.middleware.cors import CORSMiddleware
+from fastapi.security import HTTPBearer, HTTPAuthorizationCredentials
 from pydantic import BaseModel
 from sqlalchemy import or_, and_, func, cast
 from sqlalchemy.orm import Session
@@ -12,10 +16,14 @@ from geoalchemy2.functions import ST_DWithin, ST_MakePoint, ST_SetSRID
 from database import engine, get_db, Base
 from models import User, FriendRequest, Friendship, Thread, ThreadParticipant, Message
 
+SUPABASE_URL = os.getenv("SUPABASE_URL", "https://uhfgfoiueykqlmlxnbsw.supabase.co")
+JWKS_URL = f"{SUPABASE_URL}/auth/v1/.well-known/jwks.json"
+jwks_client = PyJWKClient(JWKS_URL, cache_keys=True)
+
 # ---------------------------------------------------------------------------
 # App setup
 # ---------------------------------------------------------------------------
-app = FastAPI(title="Down To Hang API")
+app = FastAPI(title="Phega API")
 
 app.add_middleware(
     CORSMiddleware,
@@ -25,6 +33,8 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
+bearer_scheme = HTTPBearer()
+
 
 @app.on_event("startup")
 def on_startup():
@@ -32,15 +42,40 @@ def on_startup():
 
 
 # ---------------------------------------------------------------------------
-# Dummy auth – returns/creates demo user with id=1
+# Auth – verify Supabase JWT and auto-register users
 # ---------------------------------------------------------------------------
-def get_current_user(db: Session = Depends(get_db)) -> User:
-    user = db.query(User).filter(User.id == 1).first()
+def get_current_user(
+    credentials: HTTPAuthorizationCredentials = Depends(bearer_scheme),
+    db: Session = Depends(get_db),
+) -> User:
+    token = credentials.credentials
+
+    try:
+        signing_key = jwks_client.get_signing_key_from_jwt(token)
+        payload = jwt.decode(
+            token,
+            signing_key.key,
+            algorithms=["ES256"],
+            audience="authenticated",
+        )
+    except jwt.ExpiredSignatureError:
+        raise HTTPException(401, "Token expired")
+    except jwt.InvalidTokenError as e:
+        raise HTTPException(401, f"Invalid token: {e}")
+
+    sub: str = payload.get("sub")
+    if not sub:
+        raise HTTPException(401, "Token missing sub claim")
+
+    user = db.query(User).filter(User.auth_id == sub).first()
     if not user:
-        user = User(id=1, name="Demo User", age=25, bio="Hello world")
+        email = payload.get("email", "")
+        name = email.split("@")[0] if email else "New User"
+        user = User(auth_id=sub, name=name, bio="")
         db.add(user)
         db.commit()
         db.refresh(user)
+
     return user
 
 

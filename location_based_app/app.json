@@ -1,8 +1,8 @@
 {
   "expo": {
-    "name": "Down To Hang",
-    "slug": "down-to-hang",
-    "scheme": "hang",
+    "name": "Phega",
+    "slug": "phega",
+    "scheme": "phega",
     "orientation": "portrait",
     "userInterfaceStyle": "automatic",
     "splash": {
