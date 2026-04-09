@@ -181,13 +181,19 @@ def discover(
         )
     ).subquery()
 
-    user_geo = cast(current_user.location, Geography)
+    # Build a SQL-level reference to the current user's location to avoid
+    # Python-side WKB hex being sent as a text literal.
+    my_loc = (
+        db.query(cast(User.location, Geography))
+        .filter(User.id == current_user.id)
+        .scalar_subquery()
+    )
 
     q = (
         db.query(
             User,
             func.ST_Distance(
-                cast(User.location, Geography), user_geo
+                cast(User.location, Geography), my_loc
             ).label("distance_m"),
         )
         .filter(
@@ -196,7 +202,7 @@ def discover(
             User.share_in_range.is_(True),
             ST_DWithin(
                 cast(User.location, Geography),
-                user_geo,
+                my_loc,
                 radius_m,
             ),
             ~User.id.in_(friend_ids_q),

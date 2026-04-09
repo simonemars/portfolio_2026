@@ -10,12 +10,15 @@ import {
   StyleSheet,
   ActivityIndicator,
 } from "react-native";
-import { useRoute, useNavigation, useFocusEffect } from "@react-navigation/native";
+import { useRoute, useNavigation } from "@react-navigation/native";
 import { useTheme } from "../theme/ThemeContext";
-import { getMessages, sendMessage } from "../services/messages";
+import {
+  getMessages,
+  sendMessage,
+  subscribeToMessages,
+  unsubscribeFromMessages,
+} from "../services/messages";
 import Avatar from "../components/Avatar";
-
-const POLL_INTERVAL = 3000;
 
 export default function ChatScreen() {
   const { params } = useRoute();
@@ -25,7 +28,6 @@ export default function ChatScreen() {
   const [text, setText] = useState("");
   const [loading, setLoading] = useState(true);
   const flatListRef = useRef(null);
-  const prevCountRef = useRef(0);
 
   useEffect(() => {
     navigation.setOptions({
@@ -34,30 +36,50 @@ export default function ChatScreen() {
     });
   }, [navigation, params?.title]);
 
-  const fetchMessages = useCallback(async () => {
+  // Load history once on mount
+  useEffect(() => {
     if (!params?.threadId) return;
-    try {
-      const data = await getMessages(params.threadId);
-      const msgs = data ?? [];
-      setMessages(msgs);
-      if (msgs.length > prevCountRef.current) {
-        setTimeout(() => flatListRef.current?.scrollToEnd({ animated: true }), 100);
+
+    let cancelled = false;
+    (async () => {
+      try {
+        const data = await getMessages(params.threadId);
+        if (!cancelled) {
+          setMessages(data ?? []);
+          setTimeout(() => flatListRef.current?.scrollToEnd({ animated: false }), 100);
+        }
+      } catch (err) {
+        console.error("Failed to load messages:", err);
+      } finally {
+        if (!cancelled) setLoading(false);
       }
-      prevCountRef.current = msgs.length;
-    } catch (err) {
-      console.error("Failed to load messages:", err);
-    } finally {
-      setLoading(false);
-    }
+    })();
+
+    return () => { cancelled = true; };
   }, [params?.threadId]);
 
-  useFocusEffect(
-    useCallback(() => {
-      fetchMessages();
-      const id = setInterval(fetchMessages, POLL_INTERVAL);
-      return () => clearInterval(id);
-    }, [fetchMessages])
-  );
+  // Subscribe to realtime inserts
+  useEffect(() => {
+    if (!params?.threadId) return;
+
+    const channel = subscribeToMessages(params.threadId, (row) => {
+      const incoming = {
+        id: row.id,
+        text: row.text,
+        isOwn: row.sender_id === undefined ? false : false,
+        createdAt: row.created_at,
+      };
+
+      setMessages((prev) => {
+        if (prev.some((m) => String(m.id) === String(incoming.id))) return prev;
+        return [...prev, incoming];
+      });
+
+      setTimeout(() => flatListRef.current?.scrollToEnd({ animated: true }), 100);
+    });
+
+    return () => unsubscribeFromMessages(channel);
+  }, [params?.threadId]);
 
   const send = async () => {
     const trimmed = text.trim();
@@ -65,8 +87,13 @@ export default function ChatScreen() {
 
     setText("");
     try {
-      await sendMessage(params.threadId, trimmed);
-      await fetchMessages();
+      const sent = await sendMessage(params.threadId, trimmed);
+      // Optimistically add if not already present from realtime
+      setMessages((prev) => {
+        if (prev.some((m) => String(m.id) === String(sent.id))) return prev;
+        return [...prev, sent];
+      });
+      setTimeout(() => flatListRef.current?.scrollToEnd({ animated: true }), 100);
     } catch (err) {
       console.error("Failed to send message:", err);
     }
@@ -95,7 +122,7 @@ export default function ChatScreen() {
       <FlatList
         ref={flatListRef}
         data={messages}
-        keyExtractor={(item) => item.id}
+        keyExtractor={(item) => String(item.id)}
         contentContainerStyle={styles.messagesList}
         renderItem={({ item }) => {
           const mine = item.isOwn;
