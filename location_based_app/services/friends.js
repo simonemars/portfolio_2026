@@ -1,4 +1,4 @@
-import { get, post } from "./api";
+import { get, post, del } from "./api";
 
 export async function getFriends() {
   return get("/api/friends");
@@ -14,4 +14,12 @@ export async function sendFriendRequest(userId) {
 
 export async function acceptFriendRequest(requestId) {
   return post("/api/friends/accept", { requestId });
+}
+
+export async function declineFriendRequest(requestId) {
+  return post("/api/friends/decline", { requestId });
+}
+
+export async function unfriend(userId) {
+  return del(`/api/friends/${userId}`);
 }
