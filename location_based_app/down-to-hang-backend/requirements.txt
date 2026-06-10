@@ -6,3 +6,6 @@ psycopg2-binary
 pydantic
 python-dotenv
 pyjwt[crypto]
+gunicorn
+slowapi
+python-json-logger
