@@ -1,0 +1,20 @@
+# Render Blueprint for the Phega FastAPI backend.
+# Render builds from the repository root (simonemars/portfolio_2026), so the
+# Docker paths below point at the backend subdirectory.
+services:
+  - type: web
+    name: phega-api
+    env: docker
+    dockerfilePath: ./location_based_app/down-to-hang-backend/Dockerfile
+    dockerContext: ./location_based_app/down-to-hang-backend
+    healthCheckPath: /health
+    envVars:
+      # Supabase pooler connection string (service-role). Set in dashboard.
+      - key: DATABASE_URL
+        sync: false
+      # Supabase project URL, used to fetch JWKS for JWT verification.
+      - key: SUPABASE_URL
+        sync: false
+      # Comma-separated list of allowed CORS origins (or * for all).
+      - key: ALLOWED_ORIGINS
+        sync: false
