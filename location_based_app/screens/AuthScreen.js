@@ -8,7 +8,6 @@ import {
   KeyboardAvoidingView,
   Platform,
   ActivityIndicator,
-  Alert,
 } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { useTheme } from "../theme/ThemeContext";
@@ -21,40 +20,55 @@ export default function AuthScreen() {
   const [password, setPassword] = useState("");
   const [loading, setLoading] = useState(false);
   const [isSignUp, setIsSignUp] = useState(false);
+  const [error, setError] = useState("");
+  const [notice, setNotice] = useState("");
 
   const handleAuth = async () => {
     const trimmedEmail = email.trim().toLowerCase();
-    if (!trimmedEmail || !password) {
-      Alert.alert("Missing fields", "Please enter both email and password.");
+    const trimmedPassword = password.trim();
+    setError("");
+    setNotice("");
+
+    if (!trimmedEmail || !trimmedPassword) {
+      setError("Please enter both email and password.");
       return;
     }
 
     setLoading(true);
     try {
       if (isSignUp) {
-        const { error: signUpError } = await supabase.auth.signUp({
+        const { data, error: signUpError } = await supabase.auth.signUp({
           email: trimmedEmail,
-          password,
+          password: trimmedPassword,
         });
         if (signUpError) throw signUpError;
-        // Auto sign-in immediately after sign-up
+
+        // If Supabase returned a session, sign-up is complete and App.js will
+        // route us in automatically. If there's no session, email confirmation
+        // is required before the account can sign in.
+        if (!data?.session) {
+          setNotice("Check your email to confirm your account, then sign in.");
+          setIsSignUp(false);
+          return;
+        }
+      } else {
         const { error: signInError } = await supabase.auth.signInWithPassword({
           email: trimmedEmail,
-          password,
+          password: trimmedPassword,
         });
         if (signInError) throw signInError;
-      } else {
-        const { error } = await supabase.auth.signInWithPassword({
-          email: trimmedEmail,
-          password,
-        });
-        if (error) throw error;
       }
     } catch (err) {
-      Alert.alert("Error", err.message);
+      setError(err?.message || "Something went wrong. Please try again.");
     } finally {
       setLoading(false);
     }
+  };
+
+  const switchMode = () => {
+    setIsSignUp((v) => !v);
+    setError("");
+    setNotice("");
   };
 
   return (
@@ -86,8 +100,10 @@ export default function AuthScreen() {
             value={email}
             onChangeText={setEmail}
             autoCapitalize="none"
+            autoCorrect={false}
             keyboardType="email-address"
             textContentType="emailAddress"
+            editable={!loading}
           />
           <TextInput
             style={[
@@ -105,7 +121,17 @@ export default function AuthScreen() {
             onChangeText={setPassword}
             secureTextEntry
             textContentType="password"
+            editable={!loading}
           />
+
+          {error ? (
+            <Text style={[styles.error, { fontFamily: theme.fonts.serif }]}>{error}</Text>
+          ) : null}
+          {notice ? (
+            <Text style={[styles.notice, { fontFamily: theme.fonts.serif, color: theme.colors.textSecondary }]}>
+              {notice}
+            </Text>
+          ) : null}
 
           <Pressable
             onPress={handleAuth}
@@ -122,7 +148,7 @@ export default function AuthScreen() {
           </Pressable>
         </View>
 
-        <Pressable onPress={() => setIsSignUp((v) => !v)} style={styles.toggle}>
+        <Pressable onPress={switchMode} disabled={loading} style={styles.toggle}>
           <Text style={[styles.toggleText, { fontFamily: theme.fonts.serif, color: theme.colors.textSecondary }]}>
             {isSignUp ? "Already have an account? " : "Don't have an account? "}
             <Text style={{ color: theme.colors.primary }}>
@@ -162,6 +188,15 @@ const styles = StyleSheet.create({
     borderWidth: 1,
     paddingHorizontal: 18,
     fontSize: 16,
+  },
+  error: {
+    color: "#E5484D",
+    fontSize: 15,
+    textAlign: "center",
+  },
+  notice: {
+    fontSize: 15,
+    textAlign: "center",
   },
   button: {
     height: 52,
