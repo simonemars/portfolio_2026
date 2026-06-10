@@ -17,6 +17,7 @@ class User(Base):
     bio = Column(String(500), nullable=True, default="")
     location = Column(Geography(geometry_type="POINT", srid=4326), nullable=True)
     share_in_range = Column(Boolean, default=False)
+    created_at = Column(DateTime(timezone=True), default=lambda: datetime.now(timezone.utc))
 
 
 class FriendRequest(Base):
@@ -66,3 +67,4 @@ class Message(Base):
     sender_id = Column(Integer, ForeignKey("users.id"), nullable=False)
     text = Column(Text, nullable=False)
     created_at = Column(DateTime(timezone=True), default=lambda: datetime.now(timezone.utc))
+    read_at = Column(DateTime(timezone=True), nullable=True)
