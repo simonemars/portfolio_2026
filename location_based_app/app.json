@@ -22,6 +22,12 @@
     },
     "plugins": [
       "expo-font"
-    ]
+    ],
+    "extra": {
+      "apiUrl": "https://REPLACE-WITH-RENDER-URL.onrender.com",
+      "eas": {
+        "projectId": "REPLACE-WITH-EAS-PROJECT-ID"
+      }
+    }
   }
 }

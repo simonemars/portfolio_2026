@@ -27,7 +27,15 @@ async function request(path, options = {}) {
     headers["Authorization"] = `Bearer ${_authToken}`;
   }
 
-  const res = await fetch(url, { ...options, headers });
+  let res;
+  try {
+    res = await fetch(url, { ...options, headers });
+  } catch (err) {
+    throw new ApiError(
+      0,
+      `Network request to ${url} failed: ${err?.message || err}. Check your connection and that the API URL is reachable.`
+    );
+  }
 
   if (!res.ok) {
     const body = await res.text().catch(() => "");

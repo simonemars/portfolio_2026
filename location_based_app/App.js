@@ -9,6 +9,7 @@ import { StatusBar } from "expo-status-bar";
 import { Ionicons } from "@expo/vector-icons";
 import { SafeAreaProvider, useSafeAreaInsets } from "react-native-safe-area-context";
 import { FiltersProvider } from "./context/FiltersContext";
+import { UserProvider } from "./context/UserContext";
 import { ThemeProvider, useTheme } from "./theme/ThemeContext";
 import { supabase } from "./services/supabase";
 import { setAuthToken, clearAuthToken } from "./services/api";
@@ -178,11 +179,13 @@ export default function App() {
       <ThemeProvider>
         <ThemedStatusBar />
         {session ? (
-          <FiltersProvider>
-            <NavigationContainerWrapper>
-              <TabNavigator />
-            </NavigationContainerWrapper>
-          </FiltersProvider>
+          <UserProvider>
+            <FiltersProvider>
+              <NavigationContainerWrapper>
+                <TabNavigator />
+              </NavigationContainerWrapper>
+            </FiltersProvider>
+          </UserProvider>
         ) : (
           <NavigationContainerWrapper>
             <AuthScreen />
