@@ -8,6 +8,7 @@ import PersonCard from "../components/PersonCard";
 import RequestsCard from "../components/RequestsCard";
 import FilterBar from "../components/FilterBar";
 import FilterSheet from "../components/FilterSheet";
+import FriendRequestsSheet from "../components/FriendRequestsSheet";
 import LocationToggle from "../components/LocationToggle";
 import { useFilters } from "../context/FiltersContext";
 import {
@@ -15,7 +16,11 @@ import {
   getLocationPermissionStatus,
 } from "../services/location";
 import { createThread } from "../services/messages";
-import { getFriends, getFriendRequests } from "../services/friends";
+import {
+  getFriends,
+  getFriendRequests,
+  sendFriendRequest,
+} from "../services/friends";
 import { useTheme } from "../theme/ThemeContext";
 
 export default function PeopleNearbyScreen() {
@@ -23,6 +28,8 @@ export default function PeopleNearbyScreen() {
   const navigation = useNavigation();
   const [tab, setTab] = useState("friends");
   const [filterSheetVisible, setFilterSheetVisible] = useState(false);
+  const [requestsSheetVisible, setRequestsSheetVisible] = useState(false);
+  const [sentRequestIds, setSentRequestIds] = useState(() => new Set());
   const {
     filters,
     locationState,
@@ -44,6 +51,25 @@ export default function PeopleNearbyScreen() {
       });
     } catch (error) {
       console.error("Error starting conversation:", error);
+    }
+  };
+
+  const handleSendRequest = async (person) => {
+    if (sentRequestIds.has(person.id)) return;
+    setSentRequestIds((prev) => {
+      const next = new Set(prev);
+      next.add(person.id);
+      return next;
+    });
+    try {
+      await sendFriendRequest(person.id);
+    } catch (error) {
+      console.error("Error sending friend request:", error);
+      setSentRequestIds((prev) => {
+        const next = new Set(prev);
+        next.delete(person.id);
+        return next;
+      });
     }
   };
 
@@ -96,7 +122,11 @@ export default function PeopleNearbyScreen() {
   };
 
   const handleReviewRequests = () => {
-    console.log("Review requests");
+    setRequestsSheetVisible(true);
+  };
+
+  const handleRequestsChanged = () => {
+    loadFriends();
   };
 
   const canShowList =
@@ -159,10 +189,15 @@ export default function PeopleNearbyScreen() {
             <PersonCard
               name={item.name}
               bio={item.bio}
-              onAdd={() => handleStartConversation(item)}
+              onAdd={
+                tab === "discover"
+                  ? () => handleSendRequest(item)
+                  : () => handleStartConversation(item)
+              }
               isFriend={!!item.isFriend}
               distanceKm={item.distanceKm}
               showDistance={tab === "discover"}
+              requestSent={tab === "discover" && sentRequestIds.has(item.id)}
             />
           )}
           ListEmptyComponent={
@@ -183,6 +218,12 @@ export default function PeopleNearbyScreen() {
       <FilterSheet
         visible={filterSheetVisible}
         onClose={() => setFilterSheetVisible(false)}
+      />
+
+      <FriendRequestsSheet
+        visible={requestsSheetVisible}
+        onClose={() => setRequestsSheetVisible(false)}
+        onChanged={handleRequestsChanged}
       />
     </View>
   );

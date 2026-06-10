@@ -10,10 +10,11 @@ export default function PersonCard({
   isFriend = false,
   inRange = false,
   distanceKm = null,
-  showDistance = false
+  showDistance = false,
+  requestSent = false
 }) {
   const { theme } = useTheme();
-  
+
   return (
     <View style={[styles.card, { backgroundColor: theme.colors.surface, borderRadius: theme.radii.xl, borderColor: theme.colors.border }]}>
       <View style={{ flex: 1 }}>
@@ -30,9 +31,15 @@ export default function PersonCard({
         <Text style={[styles.bio, { fontFamily: theme.fonts.serif, color: theme.colors.textSecondary }]}>{bio}</Text>
       </View>
       {!isFriend && onAdd && (
-        <Pressable onPress={onAdd} style={[styles.addBtn, { borderColor: theme.colors.border, backgroundColor: theme.colors.bg2 }]} hitSlop={8}>
-          <Ionicons name="person-add-outline" size={20} color={theme.colors.textSecondary} />
-        </Pressable>
+        requestSent ? (
+          <View style={[styles.addBtn, { borderColor: theme.colors.border, backgroundColor: theme.colors.bg2, opacity: 0.6 }]}>
+            <Ionicons name="checkmark" size={20} color={theme.colors.accent} />
+          </View>
+        ) : (
+          <Pressable onPress={onAdd} style={[styles.addBtn, { borderColor: theme.colors.border, backgroundColor: theme.colors.bg2 }]} hitSlop={8}>
+            <Ionicons name="person-add-outline" size={20} color={theme.colors.textSecondary} />
+          </Pressable>
+        )
       )}
     </View>
   );
