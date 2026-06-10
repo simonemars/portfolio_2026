@@ -17,17 +17,27 @@ import {
   sendMessage,
   subscribeToMessages,
   unsubscribeFromMessages,
+  markThreadRead,
 } from "../services/messages";
+import { useUser } from "../context/UserContext";
 import Avatar from "../components/Avatar";
 
 export default function ChatScreen() {
   const { params } = useRoute();
   const navigation = useNavigation();
   const { theme } = useTheme();
+  const { me } = useUser();
   const [messages, setMessages] = useState([]);
   const [text, setText] = useState("");
   const [loading, setLoading] = useState(true);
   const flatListRef = useRef(null);
+
+  // Keep the latest user id in a ref so the realtime handler can compare
+  // ownership without forcing the subscription effect to re-run when `me` loads.
+  const meIdRef = useRef(me?.id);
+  useEffect(() => {
+    meIdRef.current = me?.id;
+  }, [me?.id]);
 
   useEffect(() => {
     navigation.setOptions({
@@ -48,6 +58,12 @@ export default function ChatScreen() {
           setMessages(data ?? []);
           setTimeout(() => flatListRef.current?.scrollToEnd({ animated: false }), 100);
         }
+        // Opening the chat clears its unread count on the backend.
+        try {
+          await markThreadRead(params.threadId);
+        } catch (readErr) {
+          console.error("Failed to mark thread read:", readErr);
+        }
       } catch (err) {
         console.error("Failed to load messages:", err);
       } finally {
@@ -66,7 +82,9 @@ export default function ChatScreen() {
       const incoming = {
         id: row.id,
         text: row.text,
-        isOwn: row.sender_id === undefined ? false : false,
+        isOwn:
+          meIdRef.current != null &&
+          String(row.sender_id) === String(meIdRef.current),
         createdAt: row.created_at,
       };
 

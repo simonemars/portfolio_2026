@@ -126,7 +126,7 @@ export default function MessagesScreen({ navigation }) {
               <View
                 style={[
                   styles.unreadBadge,
-                  { backgroundColor: theme.colors.accent },
+                  { backgroundColor: theme.colors.primary },
                 ]}
               >
                 <Text
@@ -134,7 +134,7 @@ export default function MessagesScreen({ navigation }) {
                     styles.unreadText,
                     {
                       fontFamily: theme.fonts.serif,
-                      color: theme.colors.bg,
+                      color: "#fff",
                     },
                   ]}
                 >

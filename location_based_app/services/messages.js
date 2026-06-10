@@ -17,6 +17,10 @@ export async function createThread(otherUserId) {
   return post("/api/threads", { userId: otherUserId });
 }
 
+export async function markThreadRead(threadId) {
+  return post(`/api/threads/${threadId}/read`);
+}
+
 export function subscribeToMessages(threadId, onNewMessage) {
   const channel = supabase
     .channel(`messages:thread_${threadId}`)
