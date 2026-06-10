@@ -19,10 +19,10 @@ export default function PersonCard({
       <View style={{ flex: 1 }}>
         <View style={styles.topRow}>
           <Text style={[styles.name, { fontFamily: theme.fonts.serifBold, color: theme.colors.textPrimary }]}>{name}</Text>
-          {showDistance && distanceKm !== null && !inRange && (
+          {showDistance && distanceKm != null && (
             <View style={[styles.badge, { backgroundColor: theme.colors.bg2, borderColor: theme.colors.border }]}>
               <Text style={[styles.badgeText, { fontFamily: theme.fonts.serif, color: theme.colors.textSecondary }]}>
-                {distanceKm.toFixed(1)} km
+                {Math.round(distanceKm)} km away
               </Text>
             </View>
           )}

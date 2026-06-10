@@ -1,34 +1,5 @@
 import * as Location from "expo-location";
-import { post, get } from "./api";
-
-export function distanceKm(lat1, lon1, lat2, lon2) {
-  const R = 6371;
-  const dLat = toRad(lat2 - lat1);
-  const dLon = toRad(lon2 - lon1);
-  const a =
-    Math.sin(dLat / 2) * Math.sin(dLat / 2) +
-    Math.cos(toRad(lat1)) *
-      Math.cos(toRad(lat2)) *
-      Math.sin(dLon / 2) *
-      Math.sin(dLon / 2);
-  const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
-  return R * c;
-}
-
-function toRad(degrees) {
-  return (degrees * Math.PI) / 180;
-}
-
-export function isInRange(userA, userB, radiusKm) {
-  if (!userA.coords || !userB.coords) return false;
-  const distance = distanceKm(
-    userA.coords.latitude,
-    userA.coords.longitude,
-    userB.coords.latitude,
-    userB.coords.longitude
-  );
-  return distance <= radiusKm;
-}
+import { post } from "./api";
 
 export async function requestLocationPermission() {
   try {
@@ -71,15 +42,16 @@ export async function getCurrentLocation() {
   }
 }
 
-export async function updateUserLocation(lat, lng) {
-  return post("/api/users/me/location", { latitude: lat, longitude: lng });
-}
-
-export async function getNearbyPeople(radius, minAge, maxAge) {
-  const params = new URLSearchParams({
-    radius: String(radius),
-    minAge: String(minAge),
-    maxAge: String(maxAge),
+/**
+ * Single call: sends current coords + filters, server updates location
+ * and returns nearby users with only public data + rounded distance.
+ */
+export async function discoverNearby(latitude, longitude, radiusKm, minAge, maxAge) {
+  return post("/api/discover", {
+    latitude,
+    longitude,
+    radius_km: radiusKm,
+    min_age: minAge,
+    max_age: maxAge,
   });
-  return get(`/api/discover?${params}`);
 }

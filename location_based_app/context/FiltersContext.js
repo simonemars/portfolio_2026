@@ -1,5 +1,5 @@
 import React, { createContext, useContext, useState, useCallback, useEffect, useRef } from "react";
-import { getNearbyPeople } from "../services/location";
+import { getCurrentLocation, discoverNearby } from "../services/location";
 
 const FiltersContext = createContext();
 
@@ -45,7 +45,20 @@ export function FiltersProvider({ children }) {
     const id = ++fetchIdRef.current;
     setNearbyLoading(true);
     try {
-      const data = await getNearbyPeople(filters.radiusKm, filters.age[0], filters.age[1]);
+      const coords = await getCurrentLocation();
+      if (!coords || fetchIdRef.current !== id) {
+        if (fetchIdRef.current === id) setNearbyPeople([]);
+        return;
+      }
+
+      const data = await discoverNearby(
+        coords.latitude,
+        coords.longitude,
+        filters.radiusKm,
+        filters.age[0],
+        filters.age[1],
+      );
+
       if (fetchIdRef.current === id) {
         setNearbyPeople(data ?? []);
       }

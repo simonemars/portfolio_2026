@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useCallback } from "react";
+import React, { useState, useEffect } from "react";
 import { View, FlatList, StyleSheet, Text, ActivityIndicator } from "react-native";
 import { LinearGradient } from "expo-linear-gradient";
 import { useNavigation } from "@react-navigation/native";
@@ -13,8 +13,6 @@ import { useFilters } from "../context/FiltersContext";
 import {
   requestLocationPermission,
   getLocationPermissionStatus,
-  getCurrentLocation,
-  updateUserLocation,
 } from "../services/location";
 import { createThread } from "../services/messages";
 import { getFriends, getFriendRequests } from "../services/friends";
@@ -33,7 +31,6 @@ export default function PeopleNearbyScreen() {
     nearbyLoading,
     refreshNearby,
   } = useFilters();
-  const [currentLocation, setCurrentLocation] = useState(null);
   const [friends, setFriends] = useState([]);
   const [friendRequestCount, setFriendRequestCount] = useState(0);
   const [loadingFriends, setLoadingFriends] = useState(true);
@@ -57,26 +54,13 @@ export default function PeopleNearbyScreen() {
 
   useEffect(() => {
     if (locationState.permission === "granted" && locationState.inRangeSharing) {
-      fetchCurrentLocation();
+      refreshNearby();
     }
   }, [locationState.permission, locationState.inRangeSharing]);
 
   const checkLocationPermission = async () => {
     const status = await getLocationPermissionStatus();
     updateLocationState({ permission: status });
-  };
-
-  const fetchCurrentLocation = async () => {
-    const location = await getCurrentLocation();
-    setCurrentLocation(location);
-    if (location) {
-      try {
-        await updateUserLocation(location.latitude, location.longitude);
-      } catch (err) {
-        console.error("Failed to update location on server:", err);
-      }
-      refreshNearby();
-    }
   };
 
   const loadFriends = async () => {
@@ -98,7 +82,7 @@ export default function PeopleNearbyScreen() {
     const status = await requestLocationPermission();
     updateLocationState({ permission: status });
     if (status === "granted") {
-      await fetchCurrentLocation();
+      refreshNearby();
     }
   };
 
@@ -106,7 +90,7 @@ export default function PeopleNearbyScreen() {
     if (locationState.permission === "granted") {
       updateLocationState({ inRangeSharing: !locationState.inRangeSharing });
       if (!locationState.inRangeSharing) {
-        fetchCurrentLocation();
+        refreshNearby();
       }
     }
   };
@@ -176,10 +160,9 @@ export default function PeopleNearbyScreen() {
               name={item.name}
               bio={item.bio}
               onAdd={() => handleStartConversation(item)}
-              isFriend={item.isFriend}
-              inRange={item.inRange}
+              isFriend={!!item.isFriend}
               distanceKm={item.distanceKm}
-              showDistance={tab === "friends"}
+              showDistance={tab === "discover"}
             />
           )}
           ListEmptyComponent={
