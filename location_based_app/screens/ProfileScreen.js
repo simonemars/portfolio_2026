@@ -1,15 +1,20 @@
-import React from "react";
-import { View, Text, Pressable, StyleSheet } from "react-native";
+import React, { useState } from "react";
+import { View, Text, Pressable, StyleSheet, ActivityIndicator } from "react-native";
 import { useNavigation } from "@react-navigation/native";
 import { Ionicons } from "@expo/vector-icons";
-import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { useTheme } from "../theme/ThemeContext";
+import { useUser } from "../context/UserContext";
 import ScreenHeader from "../components/ScreenHeader";
+import Avatar from "../components/Avatar";
+import EditProfileSheet from "../components/EditProfileSheet";
 
 export default function ProfileScreen() {
   const navigation = useNavigation();
-  const insets = useSafeAreaInsets();
   const { theme } = useTheme();
+  const { me, loadingMe } = useUser();
+  const [editVisible, setEditVisible] = useState(false);
+
+  const showLoading = loadingMe && !me;
 
   return (
     <View style={[styles.container, { backgroundColor: theme.colors.bg }]}>
@@ -18,15 +23,45 @@ export default function ProfileScreen() {
 
       {/* Profile Info Section */}
       <View style={[styles.section, { backgroundColor: theme.colors.surface, borderColor: theme.colors.border }]}>
-        <View style={styles.avatarContainer}>
-          <View style={[styles.avatar, { backgroundColor: theme.colors.primary }]}>
-            <Text style={[styles.avatarText, { color: theme.colors.surface }]}>JD</Text>
-          </View>
-        </View>
-        <Text style={[styles.name, { color: theme.colors.textPrimary }]}>John Doe</Text>
-        <Text style={[styles.bio, { color: theme.colors.textSecondary }]}>
-          Designer & Developer
-        </Text>
+        {showLoading ? (
+          <ActivityIndicator color={theme.colors.accent} />
+        ) : (
+          <>
+            <View style={styles.avatarContainer}>
+              <Avatar name={me?.name} size={80} />
+            </View>
+            <Text style={[styles.name, { fontFamily: theme.fonts.serifBold, color: theme.colors.textPrimary }]}>
+              {me?.name || "Unnamed"}
+            </Text>
+            {me?.bio ? (
+              <Text style={[styles.bio, { fontFamily: theme.fonts.serif, color: theme.colors.textSecondary }]}>
+                {me.bio}
+              </Text>
+            ) : (
+              <Text style={[styles.bio, { fontFamily: theme.fonts.serif, color: theme.colors.textSecondary, fontStyle: "italic" }]}>
+                Add a bio
+              </Text>
+            )}
+            {me?.age != null && (
+              <Text style={[styles.age, { fontFamily: theme.fonts.sans, color: theme.colors.textSecondary }]}>
+                Age {me.age}
+              </Text>
+            )}
+
+            <Pressable
+              onPress={() => setEditVisible(true)}
+              style={({ pressed }) => [
+                styles.editButton,
+                { backgroundColor: theme.colors.accent, opacity: pressed ? 0.8 : 1 }
+              ]}
+            >
+              <Ionicons name="create-outline" size={18} color={theme.colors.bg} />
+              <Text style={[styles.editButtonText, { fontFamily: theme.fonts.serif, color: theme.colors.bg }]}>
+                Edit profile
+              </Text>
+            </Pressable>
+          </>
+        )}
       </View>
 
       <View style={{ height: 16 }} />
@@ -47,8 +82,8 @@ export default function ProfileScreen() {
           <View style={styles.settingsLeft}>
             <Ionicons name="settings-outline" size={24} color={theme.colors.primary} />
             <View style={{ marginLeft: 12 }}>
-              <Text style={[styles.settingsTitle, { color: theme.colors.textPrimary }]}>Settings</Text>
-              <Text style={[styles.settingsDesc, { color: theme.colors.textSecondary }]}>
+              <Text style={[styles.settingsTitle, { fontFamily: theme.fonts.serifBold, color: theme.colors.textPrimary }]}>Settings</Text>
+              <Text style={[styles.settingsDesc, { fontFamily: theme.fonts.serif, color: theme.colors.textSecondary }]}>
                 Appearance, privacy, notifications
               </Text>
             </View>
@@ -56,6 +91,8 @@ export default function ProfileScreen() {
           <Ionicons name="chevron-forward" size={20} color={theme.colors.textSecondary} />
         </View>
       </Pressable>
+
+      <EditProfileSheet visible={editVisible} onClose={() => setEditVisible(false)} />
     </View>
   );
 }
@@ -74,24 +111,29 @@ const styles = StyleSheet.create({
   avatarContainer: {
     marginBottom: 12
   },
-  avatar: {
-    width: 80,
-    height: 80,
-    borderRadius: 40,
-    alignItems: "center",
-    justifyContent: "center"
-  },
-  avatarText: {
-    fontFamily: "CrimsonPro_700Bold",
-    fontSize: 32
-  },
   name: {
-    fontFamily: "CrimsonPro_700Bold",
     fontSize: 24,
     marginBottom: 4
   },
   bio: {
-    fontFamily: "CrimsonPro_600SemiBold",
+    fontSize: 16,
+    textAlign: "center"
+  },
+  age: {
+    fontSize: 14,
+    marginTop: 6
+  },
+  editButton: {
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "center",
+    gap: 6,
+    marginTop: 16,
+    paddingHorizontal: 20,
+    height: 44,
+    borderRadius: 12
+  },
+  editButtonText: {
     fontSize: 16
   },
   settingsCard: {
@@ -111,15 +153,10 @@ const styles = StyleSheet.create({
     flex: 1
   },
   settingsTitle: {
-    fontFamily: "CrimsonPro_700Bold",
     fontSize: 18,
     marginBottom: 4
   },
   settingsDesc: {
-    fontFamily: "CrimsonPro_600SemiBold",
     fontSize: 14
   }
 });
-
-
-
