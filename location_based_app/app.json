@@ -21,7 +21,13 @@
       "bundler": "metro"
     },
     "plugins": [
-      "expo-font"
+      "expo-font",
+      [
+        "expo-image-picker",
+        {
+          "photosPermission": "Allow Phega to access your photos so you can set a profile picture."
+        }
+      ]
     ],
     "extra": {
       "apiUrl": "https://phega.onrender.com",

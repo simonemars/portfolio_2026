@@ -9,7 +9,7 @@ import { StatusBar } from "expo-status-bar";
 import { Ionicons } from "@expo/vector-icons";
 import { SafeAreaProvider, useSafeAreaInsets } from "react-native-safe-area-context";
 import { FiltersProvider } from "./context/FiltersContext";
-import { UserProvider } from "./context/UserContext";
+import { UserProvider, useUser } from "./context/UserContext";
 import { ThemeProvider, useTheme } from "./theme/ThemeContext";
 import { supabase } from "./services/supabase";
 import { setAuthToken, clearAuthToken } from "./services/api";
@@ -20,6 +20,7 @@ import ThreadScreen from "./screens/ThreadScreen";
 import ProfileScreen from "./screens/ProfileScreen";
 import SettingsScreen from "./screens/SettingsScreen";
 import AuthScreen from "./screens/AuthScreen";
+import OnboardingScreen from "./screens/OnboardingScreen";
 
 const Tab = createBottomTabNavigator();
 const Stack = createNativeStackNavigator();
@@ -181,9 +182,7 @@ export default function App() {
         {session ? (
           <UserProvider>
             <FiltersProvider>
-              <NavigationContainerWrapper>
-                <TabNavigator />
-              </NavigationContainerWrapper>
+              <RootGate />
             </FiltersProvider>
           </UserProvider>
         ) : (
@@ -193,6 +192,19 @@ export default function App() {
         )}
       </ThemeProvider>
     </SafeAreaProvider>
+  );
+}
+
+function RootGate() {
+  const { me, loadingMe } = useUser();
+  // While we don't yet know the user, show the loader. New users (no age set
+  // yet) go through onboarding; everyone else lands in the main app.
+  if (loadingMe && !me) return <LoadingScreen />;
+  if (me && me.age == null) return <OnboardingScreen />;
+  return (
+    <NavigationContainerWrapper>
+      <TabNavigator />
+    </NavigationContainerWrapper>
   );
 }
 
