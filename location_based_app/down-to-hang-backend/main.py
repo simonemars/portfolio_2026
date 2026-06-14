@@ -4,7 +4,7 @@ from datetime import datetime, timezone
 from typing import Optional
 
 import jwt
-from jwt import PyJWKClient
+from jwt import PyJWKClient, PyJWKClientError
 from fastapi import FastAPI, Depends, HTTPException, Request
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.security import HTTPBearer, HTTPAuthorizationCredentials
@@ -122,17 +122,35 @@ def get_current_user(
 ) -> User:
     token = credentials.credentials
 
+    # Supabase signs user access tokens either with the legacy shared secret
+    # (HS256) or, for projects on asymmetric JWT signing keys, with ES256/RS256
+    # verifiable via the project's JWKS. Pick the path from the token header so
+    # both work, and catch PyJWKClientError (which is NOT an InvalidTokenError)
+    # so a key-lookup miss returns 401 instead of an unhandled 500.
     try:
-        signing_key = jwks_client.get_signing_key_from_jwt(token)
-        payload = jwt.decode(
-            token,
-            signing_key.key,
-            algorithms=["ES256"],
-            audience="authenticated",
-        )
+        alg = jwt.get_unverified_header(token).get("alg", "")
+    except jwt.InvalidTokenError as e:
+        raise HTTPException(401, f"Invalid token: {e}")
+
+    try:
+        if alg == "HS256":
+            secret = os.getenv("SUPABASE_JWT_SECRET")
+            if not secret:
+                raise HTTPException(500, "SUPABASE_JWT_SECRET not configured")
+            payload = jwt.decode(
+                token, secret, algorithms=["HS256"], audience="authenticated"
+            )
+        else:
+            signing_key = jwks_client.get_signing_key_from_jwt(token)
+            payload = jwt.decode(
+                token,
+                signing_key.key,
+                algorithms=[alg or "ES256"],
+                audience="authenticated",
+            )
     except jwt.ExpiredSignatureError:
         raise HTTPException(401, "Token expired")
-    except jwt.InvalidTokenError as e:
+    except (jwt.InvalidTokenError, PyJWKClientError) as e:
         raise HTTPException(401, f"Invalid token: {e}")
 
     sub: str = payload.get("sub")
