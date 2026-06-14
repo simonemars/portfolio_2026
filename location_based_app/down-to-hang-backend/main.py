@@ -104,7 +104,13 @@ bearer_scheme = HTTPBearer()
 @app.on_event("startup")
 def on_startup():
     logger.info("Phega API starting up")
-    Base.metadata.create_all(bind=engine)
+    # Schema is already provisioned on the managed database; create_all is a
+    # no-op there. Guard it so a transient DB hiccup at boot can't crash the
+    # whole service — per-request sessions still connect lazily with pre_ping.
+    try:
+        Base.metadata.create_all(bind=engine)
+    except Exception as exc:
+        logger.warning("create_all skipped (DB not reachable at startup): %s", exc)
 
 
 # ---------------------------------------------------------------------------
