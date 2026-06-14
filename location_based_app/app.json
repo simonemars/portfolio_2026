@@ -24,7 +24,7 @@
       "expo-font"
     ],
     "extra": {
-      "apiUrl": "https://REPLACE-WITH-RENDER-URL.onrender.com",
+      "apiUrl": "https://phega.onrender.com",
       "eas": {
         "projectId": "REPLACE-WITH-EAS-PROJECT-ID"
       }
