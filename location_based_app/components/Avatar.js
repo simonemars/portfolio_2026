@@ -1,10 +1,24 @@
 import React from "react";
-import { View, Text, StyleSheet } from "react-native";
+import { View, Text, Image, StyleSheet } from "react-native";
 import { useTheme } from "../theme/ThemeContext";
 
-export default function Avatar({ name, size = 44 }) {
+export default function Avatar({ name, size = 44, imageUrl = null }) {
   const { theme } = useTheme();
-  
+
+  if (imageUrl) {
+    return (
+      <Image
+        source={{ uri: imageUrl }}
+        style={{
+          width: size,
+          height: size,
+          borderRadius: size / 2,
+          backgroundColor: theme.colors.chip,
+        }}
+      />
+    );
+  }
+
   const initials = (name ?? "?")
     .split(" ")
     .map((p) => p[0])
@@ -49,5 +63,3 @@ const styles = StyleSheet.create({
     fontWeight: "600",
   },
 });
-
-

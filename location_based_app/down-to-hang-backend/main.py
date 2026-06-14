@@ -193,12 +193,14 @@ class MeOut(BaseModel):
     name: str
     age: Optional[int] = None
     bio: Optional[str] = ""
+    avatarUrl: Optional[str] = None
 
 
 class MeUpdateIn(BaseModel):
     name: Optional[str] = Field(default=None, min_length=1, max_length=120)
     age: Optional[int] = Field(default=None, ge=13, le=120)
     bio: Optional[str] = Field(default=None, max_length=500)
+    avatarUrl: Optional[str] = None
 
 
 class PublicUserOut(BaseModel):
@@ -281,6 +283,7 @@ def get_me(current_user: User = Depends(get_current_user)):
         name=current_user.name,
         age=current_user.age,
         bio=current_user.bio or "",
+        avatarUrl=current_user.avatar_url,
     )
 
 
@@ -296,6 +299,8 @@ def update_me(
         current_user.age = body.age
     if body.bio is not None:
         current_user.bio = body.bio
+    if body.avatarUrl is not None:
+        current_user.avatar_url = body.avatarUrl
 
     db.commit()
     db.refresh(current_user)
@@ -304,6 +309,7 @@ def update_me(
         name=current_user.name,
         age=current_user.age,
         bio=current_user.bio or "",
+        avatarUrl=current_user.avatar_url,
     )
 
 

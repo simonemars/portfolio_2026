@@ -1,8 +1,8 @@
 import React from "react";
-import { View, Text, Pressable, Image, StyleSheet, Alert } from "react-native";
-import * as ImagePicker from "expo-image-picker";
+import { View, Text, Pressable, Image, StyleSheet } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
 import { useTheme } from "../../theme/ThemeContext";
+import { pickAvatar } from "../../services/avatar";
 
 const SIZE = 140;
 
@@ -10,27 +10,8 @@ export default function StepPhoto({ photo, onChange }) {
   const { theme } = useTheme();
 
   const pick = async () => {
-    try {
-      const perm = await ImagePicker.requestMediaLibraryPermissionsAsync();
-      if (!perm.granted) {
-        Alert.alert(
-          "Photo access needed",
-          "Please allow photo access to add a profile picture."
-        );
-        return;
-      }
-      const result = await ImagePicker.launchImageLibraryAsync({
-        mediaTypes: ["images"],
-        allowsEditing: true,
-        aspect: [1, 1],
-        quality: 0.7,
-      });
-      if (!result.canceled && result.assets?.length) {
-        onChange(result.assets[0].uri);
-      }
-    } catch (e) {
-      console.error("Image pick failed:", e);
-    }
+    const dataUri = await pickAvatar();
+    if (dataUri) onChange(dataUri);
   };
 
   return (

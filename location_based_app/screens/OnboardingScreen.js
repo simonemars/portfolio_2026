@@ -82,9 +82,12 @@ export default function OnboardingScreen() {
 
     setSubmitting(true);
     try {
-      // Persist the fields the backend knows about; the photo is local-only
-      // for now (no avatar field yet) and is included in the logged payload.
-      await updateMe({ name: payload.name, age: payload.age, bio: payload.bio });
+      await updateMe({
+        name: payload.name,
+        age: payload.age,
+        bio: payload.bio,
+        avatarUrl: payload.photo,
+      });
       await refreshMe();
     } catch (e) {
       console.error("Failed to save onboarding profile:", e);

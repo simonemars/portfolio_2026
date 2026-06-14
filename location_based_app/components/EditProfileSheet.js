@@ -16,6 +16,8 @@ import { Ionicons } from "@expo/vector-icons";
 import { useTheme } from "../theme/ThemeContext";
 import { useUser } from "../context/UserContext";
 import { updateMe } from "../services/profile";
+import { pickAvatar } from "../services/avatar";
+import Avatar from "./Avatar";
 
 export default function EditProfileSheet({ visible, onClose }) {
   const insets = useSafeAreaInsets();
@@ -25,6 +27,7 @@ export default function EditProfileSheet({ visible, onClose }) {
   const [name, setName] = useState("");
   const [bio, setBio] = useState("");
   const [age, setAge] = useState("");
+  const [avatarUrl, setAvatarUrl] = useState(null);
   const [saving, setSaving] = useState(false);
 
   // hydrate local state from current profile whenever the sheet opens
@@ -33,8 +36,14 @@ export default function EditProfileSheet({ visible, onClose }) {
       setName(me?.name ?? "");
       setBio(me?.bio ?? "");
       setAge(me?.age != null ? String(me.age) : "");
+      setAvatarUrl(me?.avatarUrl ?? null);
     }
   }, [visible, me]);
+
+  const handlePickPhoto = async () => {
+    const dataUri = await pickAvatar();
+    if (dataUri) setAvatarUrl(dataUri);
+  };
 
   const handleSave = async () => {
     if (saving) return;
@@ -45,7 +54,8 @@ export default function EditProfileSheet({ visible, onClose }) {
       await updateMe({
         name: name.trim(),
         age: Number.isNaN(parsedAge) ? null : parsedAge,
-        bio: bio.trim()
+        bio: bio.trim(),
+        avatarUrl
       });
       await refreshMe();
       onClose();
@@ -83,6 +93,16 @@ export default function EditProfileSheet({ visible, onClose }) {
             </View>
 
             <ScrollView style={styles.content} showsVerticalScrollIndicator={false} keyboardShouldPersistTaps="handled">
+              {/* Photo */}
+              <View style={styles.avatarRow}>
+                <Avatar name={name} imageUrl={avatarUrl} size={84} />
+                <Pressable onPress={handlePickPhoto} hitSlop={8} style={styles.changePhotoBtn}>
+                  <Text style={[styles.changePhoto, { fontFamily: theme.fonts.sansMed, color: theme.colors.accent }]}>
+                    {avatarUrl ? "Change photo" : "Add photo"}
+                  </Text>
+                </Pressable>
+              </View>
+
               {/* Name */}
               <View style={styles.field}>
                 <Text style={[styles.label, { fontFamily: theme.fonts.serifBold, color: theme.colors.textPrimary }]}>Name</Text>
@@ -186,6 +206,17 @@ const styles = StyleSheet.create({
   },
   content: {
     paddingHorizontal: 20
+  },
+  avatarRow: {
+    alignItems: "center",
+    paddingTop: 16,
+    paddingBottom: 4
+  },
+  changePhotoBtn: {
+    marginTop: 12
+  },
+  changePhoto: {
+    fontSize: 15
   },
   field: {
     paddingVertical: 12

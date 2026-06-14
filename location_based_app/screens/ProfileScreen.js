@@ -28,7 +28,7 @@ export default function ProfileScreen() {
         ) : (
           <>
             <View style={styles.avatarContainer}>
-              <Avatar name={me?.name} size={80} />
+              <Avatar name={me?.name} imageUrl={me?.avatarUrl} size={80} />
             </View>
             <Text style={[styles.name, { fontFamily: theme.fonts.serifBold, color: theme.colors.textPrimary }]}>
               {me?.name || "Unnamed"}

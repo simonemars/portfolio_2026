@@ -18,6 +18,9 @@ class User(Base):
     location = Column(Geography(geometry_type="POINT", srid=4326), nullable=True)
     share_in_range = Column(Boolean, default=False)
     created_at = Column(DateTime(timezone=True), default=lambda: datetime.now(timezone.utc))
+    # Stores a base64 data URI (data:image/...) for the profile photo. Nullable;
+    # users without a photo fall back to initials in the UI.
+    avatar_url = Column(Text, nullable=True)
 
 
 class FriendRequest(Base):
