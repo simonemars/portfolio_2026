@@ -1,345 +1,193 @@
 import React, { useState, useEffect } from "react";
-import { View, Text, StyleSheet, Modal, Pressable, ScrollView } from "react-native";
+import {
+  View,
+  Text,
+  StyleSheet,
+  Modal,
+  Pressable,
+  ScrollView,
+  TextInput,
+  KeyboardAvoidingView,
+  Platform,
+} from "react-native";
+import Slider from "@react-native-community/slider";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { Ionicons } from "@expo/vector-icons";
 import { useFilters } from "../context/FiltersContext";
 import { useTheme } from "../theme/ThemeContext";
 
-const RADIUS_PRESETS = [1, 3, 5, 10, 25];
-const AGE_PRESETS = [
-  { label: "18–25", value: [18, 25] },
-  { label: "21–30", value: [21, 30] },
-  { label: "25–35", value: [25, 35] },
-  { label: "30–45", value: [30, 45] }
-];
+const MIN_RADIUS = 1;
+const MAX_RADIUS = 4;
+const AGE_FLOOR = 13;
+const AGE_CEIL = 120;
+const DEFAULTS = { radiusKm: 4, age: [18, 99] };
 
 export default function FilterSheet({ visible, onClose }) {
   const insets = useSafeAreaInsets();
   const { theme } = useTheme();
   const { filters, updateFilters, resetFilters } = useFilters();
-  const [localFilters, setLocalFilters] = useState(filters);
+
+  const [radius, setRadius] = useState(filters.radiusKm);
+  const [minAge, setMinAge] = useState(String(filters.age[0]));
+  const [maxAge, setMaxAge] = useState(String(filters.age[1]));
 
   useEffect(() => {
     if (visible) {
-      setLocalFilters(filters);
+      setRadius(filters.radiusKm);
+      setMinAge(String(filters.age[0]));
+      setMaxAge(String(filters.age[1]));
     }
   }, [visible, filters]);
 
   const handleApply = () => {
-    updateFilters(localFilters);
+    let lo = parseInt(minAge, 10);
+    let hi = parseInt(maxAge, 10);
+    if (Number.isNaN(lo)) lo = AGE_FLOOR;
+    if (Number.isNaN(hi)) hi = AGE_CEIL;
+    lo = Math.min(Math.max(lo, AGE_FLOOR), AGE_CEIL);
+    hi = Math.min(Math.max(hi, AGE_FLOOR), AGE_CEIL);
+    if (lo > hi) [lo, hi] = [hi, lo];
+    updateFilters({ radiusKm: radius, age: [lo, hi] });
     onClose();
   };
 
   const handleReset = () => {
-    const defaultFilters = { radiusKm: 5, age: [18, 99] };
-    setLocalFilters(defaultFilters);
+    setRadius(DEFAULTS.radiusKm);
+    setMinAge(String(DEFAULTS.age[0]));
+    setMaxAge(String(DEFAULTS.age[1]));
     resetFilters();
   };
 
   return (
-    <Modal
-      visible={visible}
-      animationType="slide"
-      transparent={true}
-      onRequestClose={onClose}
-    >
+    <Modal visible={visible} animationType="slide" transparent onRequestClose={onClose}>
       <Pressable style={styles.overlay} onPress={onClose}>
-        <Pressable style={[styles.sheet, { backgroundColor: theme.colors.bg2 }]} onPress={(e) => e.stopPropagation()}>
-          <View style={[styles.header, { paddingTop: insets.top + 16, borderBottomColor: theme.colors.border }]}>
-            <Text style={[styles.headerTitle, { fontFamily: theme.fonts.serifBold, color: theme.colors.textPrimary }]}>Filters</Text>
-            <Pressable onPress={onClose} style={styles.closeButton}>
-              <Ionicons name="close" size={24} color={theme.colors.textPrimary} />
-            </Pressable>
-          </View>
+        <KeyboardAvoidingView
+          behavior={Platform.OS === "ios" ? "padding" : undefined}
+          style={styles.kav}
+        >
+          <Pressable style={[styles.sheet, { backgroundColor: theme.colors.bg2 }]} onPress={(e) => e.stopPropagation()}>
+            <View style={[styles.header, { paddingTop: insets.top + 16, borderBottomColor: theme.colors.border }]}>
+              <Text style={[styles.headerTitle, { fontFamily: theme.fonts.serifBold, color: theme.colors.textPrimary }]}>Filters</Text>
+              <Pressable onPress={onClose} style={styles.closeButton}>
+                <Ionicons name="close" size={24} color={theme.colors.textPrimary} />
+              </Pressable>
+            </View>
 
-          <ScrollView style={styles.content} showsVerticalScrollIndicator={false}>
-            {/* Radius */}
-            <View style={[styles.section, { borderBottomColor: theme.colors.border }]}>
-              <Text style={[styles.sectionTitle, { fontFamily: theme.fonts.serifBold, color: theme.colors.textPrimary }]}>Radius</Text>
-              <View style={styles.presetRow}>
-                {RADIUS_PRESETS.map((preset) => {
-                  const isActive = localFilters.radiusKm === preset;
-                  return (
-                    <Pressable
-                      key={preset}
-                      onPress={() => setLocalFilters((prev) => ({ ...prev, radiusKm: preset }))}
-                      style={[
-                        styles.presetChip,
-                        { backgroundColor: theme.colors.surface, borderColor: theme.colors.border },
-                        isActive && { backgroundColor: theme.colors.accent, borderColor: theme.colors.accent }
-                      ]}
-                    >
-                      <Text
-                        style={[
-                          styles.presetText,
-                          { fontFamily: theme.fonts.serif, color: isActive ? theme.colors.bg : theme.colors.textPrimary }
-                        ]}
-                      >
-                        {preset} km
-                      </Text>
-                    </Pressable>
-                  );
-                })}
-              </View>
-              <View style={styles.sliderContainer}>
-                <Text style={[styles.sliderValue, { fontFamily: theme.fonts.serif, color: theme.colors.textPrimary }]}>
-                  {localFilters.radiusKm.toFixed(1)} km
-                </Text>
-                <Pressable
-                  style={[styles.sliderTrack, { backgroundColor: theme.colors.border }]}
-                  onPress={(e) => {
-                    const { locationX, width } = e.nativeEvent;
-                    const percentage = Math.max(0, Math.min(1, locationX / width));
-                    const newValue = 0.5 + percentage * 49.5;
-                    setLocalFilters((prev) => ({ ...prev, radiusKm: Math.round(newValue * 2) / 2 }));
-                  }}
-                >
-                  <View
-                    style={[
-                      styles.sliderFill,
-                      { width: `${((localFilters.radiusKm - 0.5) / 49.5) * 100}%`, backgroundColor: theme.colors.accent }
-                    ]}
-                  />
-                  <View
-                    style={[
-                      styles.sliderThumb,
-                      { left: `${((localFilters.radiusKm - 0.5) / 49.5) * 100}%`, backgroundColor: theme.colors.accent, borderColor: theme.colors.bg }
-                    ]}
-                  />
-                </Pressable>
+            <ScrollView style={styles.content} showsVerticalScrollIndicator={false} keyboardShouldPersistTaps="handled">
+              {/* Radius */}
+              <View style={[styles.section, { borderBottomColor: theme.colors.border }]}>
+                <View style={styles.sectionHead}>
+                  <Text style={[styles.sectionTitle, { fontFamily: theme.fonts.serifBold, color: theme.colors.textPrimary }]}>Radius</Text>
+                  <Text style={[styles.sectionValue, { fontFamily: theme.fonts.serif, color: theme.colors.accent }]}>
+                    {radius} km
+                  </Text>
+                </View>
+                <Slider
+                  style={styles.slider}
+                  minimumValue={MIN_RADIUS}
+                  maximumValue={MAX_RADIUS}
+                  step={1}
+                  value={radius}
+                  onValueChange={setRadius}
+                  minimumTrackTintColor={theme.colors.accent}
+                  maximumTrackTintColor={theme.colors.border}
+                  thumbTintColor={theme.colors.accent}
+                />
                 <View style={styles.sliderLabels}>
-                  <Text style={[styles.sliderLabel, { fontFamily: theme.fonts.serif, color: theme.colors.textSecondary }]}>0.5</Text>
-                  <Text style={[styles.sliderLabel, { fontFamily: theme.fonts.serif, color: theme.colors.textSecondary }]}>50</Text>
+                  <Text style={[styles.sliderLabel, { fontFamily: theme.fonts.serif, color: theme.colors.textSecondary }]}>{MIN_RADIUS} km</Text>
+                  <Text style={[styles.sliderLabel, { fontFamily: theme.fonts.serif, color: theme.colors.textSecondary }]}>{MAX_RADIUS} km</Text>
                 </View>
               </View>
-            </View>
 
-            {/* Age */}
-            <View style={[styles.section, { borderBottomColor: theme.colors.border }]}>
-              <Text style={[styles.sectionTitle, { fontFamily: theme.fonts.serifBold, color: theme.colors.textPrimary }]}>Age</Text>
-              <View style={styles.presetRow}>
-                {AGE_PRESETS.map((preset, index) => {
-                  const isActive = localFilters.age[0] === preset.value[0] && localFilters.age[1] === preset.value[1];
-                  return (
-                    <Pressable
-                      key={index}
-                      onPress={() => setLocalFilters((prev) => ({ ...prev, age: preset.value }))}
-                      style={[
-                        styles.presetChip,
-                        { backgroundColor: theme.colors.surface, borderColor: theme.colors.border },
-                        isActive && { backgroundColor: theme.colors.accent, borderColor: theme.colors.accent }
-                      ]}
-                    >
-                      <Text
-                        style={[
-                          styles.presetText,
-                          { fontFamily: theme.fonts.serif, color: isActive ? theme.colors.bg : theme.colors.textPrimary }
-                        ]}
-                      >
-                        {preset.label}
-                      </Text>
-                    </Pressable>
-                  );
-                })}
-              </View>
-              <View style={styles.ageContainer}>
-                <View style={styles.ageSliderContainer}>
-                  <Text style={[styles.ageLabel, { fontFamily: theme.fonts.serif, color: theme.colors.textPrimary }]}>Min: {localFilters.age[0]}</Text>
-                  <Pressable
-                    style={[styles.ageSliderTrack, { backgroundColor: theme.colors.border }]}
-                    onPress={(e) => {
-                      const { locationX, width } = e.nativeEvent;
-                      const percentage = Math.max(0, Math.min(1, locationX / width));
-                      const newMin = Math.max(18, Math.min(localFilters.age[1] - 1, Math.round(18 + percentage * 81)));
-                      setLocalFilters((prev) => ({ ...prev, age: [newMin, prev.age[1]] }));
-                    }}
-                  >
-                    <View
-                      style={[
-                        styles.ageSliderFill,
-                        { width: `${((localFilters.age[0] - 18) / 81) * 100}%`, backgroundColor: theme.colors.accent }
-                      ]}
+              {/* Age */}
+              <View style={[styles.section, { borderBottomColor: theme.colors.border }]}>
+                <Text style={[styles.sectionTitle, { fontFamily: theme.fonts.serifBold, color: theme.colors.textPrimary }]}>Age range</Text>
+                <View style={styles.ageRow}>
+                  <View style={styles.ageField}>
+                    <Text style={[styles.ageLabel, { fontFamily: theme.fonts.sans, color: theme.colors.textSecondary }]}>Minimum</Text>
+                    <TextInput
+                      value={minAge}
+                      onChangeText={(t) => setMinAge(t.replace(/[^0-9]/g, ""))}
+                      keyboardType="number-pad"
+                      maxLength={3}
+                      placeholder="13"
+                      placeholderTextColor={theme.colors.textSecondary}
+                      style={[styles.ageInput, { backgroundColor: theme.colors.surface, borderColor: theme.colors.border, color: theme.colors.textPrimary, fontFamily: theme.fonts.sans }]}
                     />
-                  </Pressable>
-                </View>
-                <View style={styles.ageSliderContainer}>
-                  <Text style={[styles.ageLabel, { fontFamily: theme.fonts.serif, color: theme.colors.textPrimary }]}>Max: {localFilters.age[1]}</Text>
-                  <Pressable
-                    style={[styles.ageSliderTrack, { backgroundColor: theme.colors.border }]}
-                    onPress={(e) => {
-                      const { locationX, width } = e.nativeEvent;
-                      const percentage = Math.max(0, Math.min(1, locationX / width));
-                      const newMax = Math.max(localFilters.age[0] + 1, Math.min(99, Math.round(18 + percentage * 81)));
-                      setLocalFilters((prev) => ({ ...prev, age: [prev.age[0], newMax] }));
-                    }}
-                  >
-                    <View
-                      style={[
-                        styles.ageSliderFill,
-                        { width: `${((localFilters.age[1] - 18) / 81) * 100}%`, backgroundColor: theme.colors.accent }
-                      ]}
+                  </View>
+                  <Text style={[styles.ageDash, { color: theme.colors.textSecondary }]}>–</Text>
+                  <View style={styles.ageField}>
+                    <Text style={[styles.ageLabel, { fontFamily: theme.fonts.sans, color: theme.colors.textSecondary }]}>Maximum</Text>
+                    <TextInput
+                      value={maxAge}
+                      onChangeText={(t) => setMaxAge(t.replace(/[^0-9]/g, ""))}
+                      keyboardType="number-pad"
+                      maxLength={3}
+                      placeholder="120"
+                      placeholderTextColor={theme.colors.textSecondary}
+                      style={[styles.ageInput, { backgroundColor: theme.colors.surface, borderColor: theme.colors.border, color: theme.colors.textPrimary, fontFamily: theme.fonts.sans }]}
                     />
-                  </Pressable>
+                  </View>
                 </View>
+                <Text style={[styles.ageHint, { fontFamily: theme.fonts.sans, color: theme.colors.textSecondary }]}>
+                  Only people whose age falls in this range are shown.
+                </Text>
               </View>
-            </View>
-          </ScrollView>
+            </ScrollView>
 
-          <View style={[styles.footer, { paddingBottom: insets.bottom + 16, borderTopColor: theme.colors.border }]}>
-            <Pressable onPress={handleReset} style={[styles.resetButton, { backgroundColor: theme.colors.surface, borderColor: theme.colors.border }]}>
-              <Text style={[styles.resetText, { fontFamily: theme.fonts.serif, color: theme.colors.textPrimary }]}>Reset</Text>
-            </Pressable>
-            <Pressable onPress={handleApply} style={[styles.applyButton, { backgroundColor: theme.colors.accent }]}>
-              <Text style={[styles.applyText, { fontFamily: theme.fonts.serif, color: theme.colors.bg }]}>Apply</Text>
-            </Pressable>
-          </View>
-        </Pressable>
+            <View style={[styles.footer, { paddingBottom: insets.bottom + 16, borderTopColor: theme.colors.border }]}>
+              <Pressable onPress={handleReset} style={[styles.resetButton, { backgroundColor: theme.colors.surface, borderColor: theme.colors.border }]}>
+                <Text style={[styles.resetText, { fontFamily: theme.fonts.serif, color: theme.colors.textPrimary }]}>Reset</Text>
+              </Pressable>
+              <Pressable onPress={handleApply} style={[styles.applyButton, { backgroundColor: theme.colors.accent }]}>
+                <Text style={[styles.applyText, { fontFamily: theme.fonts.serif, color: theme.colors.bg }]}>Apply</Text>
+              </Pressable>
+            </View>
+          </Pressable>
+        </KeyboardAvoidingView>
       </Pressable>
     </Modal>
   );
 }
 
 const styles = StyleSheet.create({
-  overlay: {
-    flex: 1,
-    backgroundColor: "rgba(0, 0, 0, 0.5)",
-    justifyContent: "flex-end"
-  },
-  sheet: {
-    borderTopLeftRadius: 20,
-    borderTopRightRadius: 20,
-    maxHeight: "90%"
-  },
+  overlay: { flex: 1, backgroundColor: "rgba(0, 0, 0, 0.5)", justifyContent: "flex-end" },
+  kav: { justifyContent: "flex-end" },
+  sheet: { borderTopLeftRadius: 20, borderTopRightRadius: 20, maxHeight: "90%" },
   header: {
     flexDirection: "row",
     alignItems: "center",
     justifyContent: "space-between",
     paddingHorizontal: 20,
     paddingBottom: 16,
-    borderBottomWidth: 1
+    borderBottomWidth: 1,
   },
-  headerTitle: {
-    fontSize: 24
-  },
-  closeButton: {
-    width: 44,
-    height: 44,
-    alignItems: "center",
-    justifyContent: "center"
-  },
-  content: {
-    flex: 1,
-    paddingHorizontal: 20
-  },
-  section: {
-    paddingVertical: 20,
-    borderBottomWidth: 1
-  },
-  sectionTitle: {
-    fontSize: 18,
-    marginBottom: 12
-  },
-  presetRow: {
-    flexDirection: "row",
-    flexWrap: "wrap",
-    gap: 8,
-    marginBottom: 16
-  },
-  presetChip: {
-    paddingHorizontal: 16,
-    paddingVertical: 10,
-    borderRadius: 20,
-    borderWidth: 1
-  },
-  presetText: {
-    fontSize: 14
-  },
-  sliderContainer: {
-    marginTop: 8
-  },
-  sliderValue: {
-    fontSize: 16,
-    marginBottom: 8,
-    textAlign: "center"
-  },
-  sliderTrack: {
-    height: 4,
-    borderRadius: 2,
-    marginBottom: 4,
-    position: "relative"
-  },
-  sliderFill: {
-    height: "100%",
-    borderRadius: 2,
-    position: "absolute",
-    left: 0,
-    top: 0
-  },
-  sliderThumb: {
-    width: 20,
-    height: 20,
-    borderRadius: 10,
-    borderWidth: 2,
-    position: "absolute",
-    top: -8,
-    marginLeft: -10
-  },
-  sliderLabels: {
-    flexDirection: "row",
-    justifyContent: "space-between"
-  },
-  sliderLabel: {
-    fontSize: 12
-  },
-  ageContainer: {
-    marginTop: 12,
-    gap: 16
-  },
-  ageSliderContainer: {
-    gap: 8
-  },
-  ageLabel: {
-    fontSize: 14
-  },
-  ageSliderTrack: {
-    height: 4,
-    borderRadius: 2,
-    position: "relative"
-  },
-  ageSliderFill: {
-    height: "100%",
-    borderRadius: 2,
-    position: "absolute",
-    left: 0,
-    top: 0
-  },
-  footer: {
-    flexDirection: "row",
-    gap: 12,
-    paddingHorizontal: 20,
-    paddingTop: 16,
-    borderTopWidth: 1
-  },
-  resetButton: {
-    flex: 1,
-    height: 48,
-    borderRadius: 12,
+  headerTitle: { fontSize: 24 },
+  closeButton: { width: 44, height: 44, alignItems: "center", justifyContent: "center" },
+  content: { paddingHorizontal: 20 },
+  section: { paddingVertical: 20, borderBottomWidth: 1 },
+  sectionHead: { flexDirection: "row", justifyContent: "space-between", alignItems: "baseline", marginBottom: 8 },
+  sectionTitle: { fontSize: 18, marginBottom: 12 },
+  sectionValue: { fontSize: 18 },
+  slider: { width: "100%", height: 40 },
+  sliderLabels: { flexDirection: "row", justifyContent: "space-between" },
+  sliderLabel: { fontSize: 12 },
+  ageRow: { flexDirection: "row", alignItems: "flex-end", gap: 12 },
+  ageField: { flex: 1 },
+  ageLabel: { fontSize: 13, marginBottom: 8 },
+  ageInput: {
     borderWidth: 1,
-    alignItems: "center",
-    justifyContent: "center"
-  },
-  resetText: {
-    fontSize: 16
-  },
-  applyButton: {
-    flex: 1,
-    height: 48,
     borderRadius: 12,
-    alignItems: "center",
-    justifyContent: "center"
-  },
-  applyText: {
+    paddingHorizontal: 14,
+    paddingVertical: 12,
     fontSize: 16,
-    fontWeight: "600"
-  }
+    textAlign: "center",
+  },
+  ageDash: { fontSize: 20, marginBottom: 12 },
+  ageHint: { fontSize: 13, marginTop: 12 },
+  footer: { flexDirection: "row", gap: 12, paddingHorizontal: 20, paddingTop: 16, borderTopWidth: 1 },
+  resetButton: { flex: 1, height: 48, borderRadius: 12, borderWidth: 1, alignItems: "center", justifyContent: "center" },
+  resetText: { fontSize: 16 },
+  applyButton: { flex: 1, height: 48, borderRadius: 12, alignItems: "center", justifyContent: "center" },
+  applyText: { fontSize: 16, fontWeight: "600" },
 });

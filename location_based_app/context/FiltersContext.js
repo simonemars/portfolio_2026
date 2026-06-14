@@ -3,7 +3,7 @@ import { getCurrentLocation, discoverNearby } from "../services/location";
 
 const FiltersContext = createContext();
 
-const DEFAULT_FILTERS = { radiusKm: 5, age: [18, 99] };
+const DEFAULT_FILTERS = { radiusKm: 4, age: [18, 99] };
 
 export function FiltersProvider({ children }) {
   const [filters, setFilters] = useState(DEFAULT_FILTERS);
