@@ -1,0 +1,25 @@
+audio:
+  sample_rate: 44100
+  channels: 1
+  block_size_ms: 30        # size of each audio callback chunk, in milliseconds
+
+# Starting-point values from the original build/tuning pass (grid-searched
+# against 20 taps + 15 non-tap clips captured via the live streaming
+# pipeline — see scripts/setup_wizard.py and STATUS.md). Detection is
+# calibrated per-machine: after recording your own samples with the setup
+# wizard, re-run scripts/evaluate_detector.py and adjust these to taste —
+# e.g. raise min_template_similarity or energy_threshold to trade recall
+# for fewer false positives.
+detection:
+  energy_threshold: 0.008        # RMS level above which a block is a candidate spike
+  max_event_ms: 60               # reject candidates whose energy stays elevated longer than this (typing/speech bursts run longer)
+  min_template_similarity: 0.90  # cosine similarity of the peak block's spectrum to the tap template (src/tap_template.npz)
+
+counting:
+  refractory_ms: 200       # minimum gap between two counted taps (avoids double-counting one tap's decay)
+  group_window_ms: 500     # taps within this window of each other are grouped into one pattern
+
+actions:
+  1: "Screenshot To Photos"   # name of the macOS Shortcut to run for a single tap
+  2: "Screenshot To Photos"   # placeholder — remap once double-tap behavior is defined
+  3: "Screenshot To Photos"   # placeholder — remap once triple-tap behavior is defined

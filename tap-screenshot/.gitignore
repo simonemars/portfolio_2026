@@ -1,0 +1,11 @@
+.venv/
+__pycache__/
+*.pyc
+.DS_Store
+.claude/
+logs/
+
+# Recorded via scripts/setup_wizard.py or scripts/record_*.py — personal to
+# your own mic/voice/hardware, not shipped in the repo. See README.md.
+tests/sample_audio/*.wav
+src/tap_template.npz
