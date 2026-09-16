@@ -1,0 +1,12 @@
+node_modules/
+.env
+.env.*
+!.env.example
+api.env
+*.key
+.DS_Store
+.expo/
+dist/
+build/
+supabase/.branches/
+supabase/.temp/

@@ -1,0 +1,75 @@
+:root {
+  --text: #6f6a5c;
+  --text-h: #16140f;
+  --bg: #f2efe5;
+  --bg-elevated: #ffffff;
+  --border: #ddd6c4;
+  --accent: #1f4a30;
+  --accent-text: #f2efe5;
+  --accent-bg: rgba(31, 74, 48, 0.1);
+  --error: #a3311f;
+
+  --sans: 'Jost', 'Century Gothic', 'Futura', system-ui, 'Segoe UI', Roboto, sans-serif;
+
+  font: bold 16px/145% var(--sans);
+  color-scheme: light dark;
+  color: var(--text);
+  background: var(--bg);
+  font-synthesis: none;
+  text-rendering: optimizeLegibility;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme='light']) {
+    --text: #a9a290;
+    --text-h: #f5f2e8;
+    --bg: #17160f;
+    --bg-elevated: #221f16;
+    --border: #38362a;
+    --accent: #6fcf8f;
+    --accent-text: #0e2216;
+    --accent-bg: rgba(111, 207, 143, 0.16);
+    --error: #ff6b64;
+  }
+}
+
+/* Explicit choice (toggle), overriding system preference in either direction. */
+:root[data-theme='dark'] {
+  --text: #a9a290;
+  --text-h: #f5f2e8;
+  --bg: #17160f;
+  --bg-elevated: #221f16;
+  --border: #38362a;
+  --accent: #6fcf8f;
+  --accent-text: #0e2216;
+  --accent-bg: rgba(111, 207, 143, 0.16);
+  --error: #ff6b64;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+}
+
+h1,
+h2 {
+  font-weight: 700;
+  color: var(--text-h);
+}
+
+button {
+  font: inherit;
+}
+
+input {
+  font: inherit;
+}
+
+a {
+  color: var(--accent);
+}
